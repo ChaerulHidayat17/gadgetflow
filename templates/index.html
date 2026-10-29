@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>GadgetFlow — Rekap & Analitik Penjualan HP</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .font-mono {
+            font-family: 'JetBrains Mono', monospace !important;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        
+        /* Glow effects */
+        .glow-emerald {
+            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+        }
+        
+        .main-tab-btn.active {
+            background-color: #10B981 !important;
+            color: #022C22 !important;
+            font-weight: 800;
+        }
+
+        /* Clean Print / PDF Styling */
+        @media print {
+            body {
+                background: white !important;
+                color: black !important;
+            }
+            header, .action-col, #monthlyChart, .main-tab-btn, button, #buy-modal, #sell-modal, #edit-modal, nav {
+                display: none !important;
+            }
+            .bg-slate-900, .bg-slate-950, .bg-slate-900\/80, .bg-slate-900\/90 {
+                background: white !important;
+                border: 1px solid #E2E8F0 !important;
+                color: black !important;
+            }
+            .text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
+                color: #0F172A !important;
+            }
+            .text-emerald-400 {
+                color: #059669 !important;
+                font-weight: bold !important;
+            }
+            table {
+                width: 100% !important;
+                border-collapse: collapse !important;
+            }
+            th, td {
+                border: 1px solid #CBD5E1 !important;
+                padding: 6px 8px !important;
+            }
+            .extra-row {
+                display: table-row !important;
+            }
+        }
+    </style>
+</head>
+<body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950">
+
+    <!-- TOP NAVBAR -->
+    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
+        <div class="max-w-7xl mx-auto px-3.5 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-2.5 sm:space-x-3">
+                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-white text-lg sm:text-xl shadow-lg shadow-emerald-500/20 font-bold shrink-0">
+                    📱
+                </div>
+                <div>
+                    <div class="flex items-center gap-1.5">
+                        <h1 class="text-sm sm:text-lg font-extrabold tracking-tight text-white leading-none">GadgetFlow</h1>
+                        <span class="inline-flex px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Pro</span>
+                    </div>
+                    <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 font-medium truncate max-w-[180px] sm:max-w-none">Buku Penjualan &amp; Stok HP</p>
+                </div>
+            </div>
+
+            <!-- Header Action Buttons -->
+            <div class="flex items-center space-x-2">
+                <button onclick="openBuyModal()" class="inline-flex items-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 rounded-xl text-xs font-extrabold transition shadow-md shadow-emerald-500/20 cursor-pointer">
+                    <span class="text-sm font-bold">+</span>
+                    <span>Stok Baru</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN BODY CONTAINER -->
+    <main class="max-w-7xl mx-auto px-3.5 sm:px-6 w-full py-4 sm:py-6 flex-1 space-y-4 sm:space-y-6">
+
+        <!-- SECTION 1: 4 EXECUTIVE METRIC CARDS (COMPACT & MOBILE-OPTIMIZED) -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            
+            <!-- CARD 1: TOTAL PENJUALAN (OMSET) -->
+            <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total Penjualan</span>
+                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-blue-500/20">
+                        🛒
+                    </span>
+                </div>
+                <div class="mt-2 sm:mt-3">
+                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-white tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}">
+                        Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}
+                    </div>
+                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium flex items-center gap-1">
+                        <span class="text-blue-400 font-bold">{{ stats.total_units_sold }} Unit</span> terjual
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 2: TOTAL MODAL TERJUAL -->
+            <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Modal Terjual</span>
+                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-rose-500/20">
+                        📉
+                    </span>
+                </div>
+                <div class="mt-2 sm:mt-3">
+                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-slate-200 tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.total_beli_terjual).replace(',', '.') }}">
+                        Rp {{ "{:,.0f}".format(stats.total_beli_terjual).replace(',', '.') }}
+                    </div>
+                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium truncate">
+                        HPP unit yang laku
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 3: TOTAL KEUNTUNGAN BERSIH (CUAN) -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-3 sm:p-5 relative overflow-hidden glow-emerald">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-extrabold text-emerald-400 uppercase tracking-wider">Cuan Bersih</span>
+                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs sm:text-sm font-bold border border-emerald-500/30">
+                        💰
+                    </span>
+                </div>
+                <div class="mt-2 sm:mt-3">
+                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-emerald-400 tracking-tight truncate" title="+Rp {{ "{:,.0f}".format(stats.total_untung).replace(',', '.') }}">
+                        +Rp {{ "{:,.0f}".format(stats.total_untung).replace(',', '.') }}
+                    </div>
+                    <div class="text-[10px] sm:text-[11px] text-emerald-400/80 mt-0.5 font-bold flex items-center gap-1">
+                        <span>Margin: {{ "{:.1f}%".format(stats.avg_margin * 100) }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 4: STOK READY & MODAL TERTAHAN -->
+            <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">Stok Ready</span>
+                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-amber-500/20">
+                        📦
+                    </span>
+                </div>
+                <div class="mt-2 sm:mt-3">
+                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-amber-300 tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }}">
+                        Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }}
+                    </div>
+                    <div class="text-[10px] sm:text-[11px] text-amber-400/90 mt-0.5 font-bold truncate">
+                        {{ stats.ready_count }} unit siap jual
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SECTION 2: TOP APP TABS SWITCHER -->
+        <nav class="flex items-center p-1 bg-slate-900 border border-slate-800 rounded-2xl gap-1">
+            <button onclick="switchTab('ready')" id="tab-btn-ready" class="main-tab-btn active flex-1 py-2.5 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>📦 Stok Ready</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-950/40 font-mono">{{ ready_stocks|length }}</span>
+            </button>
+            <button onclick="switchTab('penjualan')" id="tab-btn-penjualan" class="main-tab-btn flex-1 py-2.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>🛒 Penjualan</span>
+                <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-800 font-mono">{{ recent_sales|length }}</span>
+            </button>
+            <button onclick="switchTab('stats')" id="tab-btn-stats" class="main-tab-btn py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1 cursor-pointer">
+                <span>📊 Grafik</span>
+            </button>
+            <button onclick="switchTab('pajak')" id="tab-btn-pajak" class="main-tab-btn py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
+                <span>⚖️ Pajak UMKM</span>
+                {% if tax_info.tax_amount == 0 %}
+                <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Nihil</span>
+                {% else %}
+                <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-amber-500/20 text-amber-300 font-mono font-bold border border-amber-500/30">0.5%</span>
+                {% endif %}
+            </button>
+        </nav>
+
+        <!-- TAB CONTENT 1: STOK READY (DEFAULT AKTIF AGAR FOKUS DI UNIT JUALAN) -->
+        <div id="tab-content-ready" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Header -->
+            <div class="p-3.5 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+                <div>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
+                        <span>Unit Stok Ready (Belum Laku)</span>
+                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                            {{ ready_stocks|length }} Unit
+                        </span>
+                    </h3>
+                    <p class="text-[11px] text-slate-400 mt-0.5">Klik "Jual" saat ada pembeli deal untuk catat keuntungan.</p>
+                </div>
+            </div>
+
+            <!-- MOBILE CARD VIEW FOR READY STOCK (RESPONSIVE FOR SMARTPHONES) -->
+            <div class="sm:hidden divide-y divide-slate-800/80">
+                {% if ready_stocks %}
+                    {% for r in ready_stocks %}
+                    <div class="p-3.5 space-y-2.5 bg-slate-900/40">
+                        <div class="flex items-start justify-between gap-2">
+                            <div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-[9px] font-mono font-bold bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded uppercase">{{ r.merk }}</span>
+                                    <span class="text-[10px] font-mono text-slate-500">#{{ r.id }}</span>
+                                    <span class="text-[10px] text-slate-400">{{ r.tanggal_beli or r.tanggal }}</span>
+                                </div>
+                                <h4 class="font-extrabold text-sm text-white mt-1">{{ r.nama_produk }}</h4>
+                            </div>
+                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
+                                READY
+                            </span>
+                        </div>
+
+                        <div class="flex items-center justify-between text-xs pt-1.5 border-t border-slate-800/60 font-mono">
+                            <div>
+                                <span class="text-[10px] text-slate-500 font-sans block">Modal Beli</span>
+                                <span class="font-bold text-amber-300 text-sm">
+                                    Rp {{ "{:,.0f}".format(r.harga_beli).replace(',', '.') }}
+                                </span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-slate-500 font-sans block">Metode Beli</span>
+                                <span class="text-[10px] font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded">{{ r.pembayaran }}</span>
+                            </div>
+                        </div>
+
+                        <div class="flex items-center gap-2 pt-1">
+                            <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1">
+                                <span>🤝</span>
+                                <span>Jual Unit Ini</span>
+                            </button>
+                            <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold border border-slate-700 active:scale-95">
+                                ✏️
+                            </button>
+                            <button onclick="deleteRow({{ r.id }})" class="px-3 py-2 bg-slate-800 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs font-bold border border-slate-700 active:scale-95">
+                                🗑️
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="py-10 px-4 text-center text-slate-500 text-xs italic">
+                        Belum ada unit di stok ready. Klik <b>+ Stok Baru</b> di atas untuk mencatat HP baru!
+                    </div>
+                {% endif %}
+            </div>
+
+            <!-- DESKTOP TABLE VIEW FOR READY STOCK (VISIBLE ON TABLETS & PC) -->
+            <div class="hidden sm:block overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                            <th class="py-3 px-4">#ID</th>
+                            <th class="py-3 px-4">Tanggal Masuk</th>
+                            <th class="py-3 px-4">Merk &amp; Tipe Unit</th>
+                            <th class="py-3 px-4 text-right">Modal Kulakan</th>
+                            <th class="py-3 px-4">Metode Beli</th>
+                            <th class="py-3 px-4 text-center">Status</th>
+                            <th class="py-3 px-4 text-center">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60">
+                        {% if ready_stocks %}
+                            {% for r in ready_stocks %}
+                            <tr class="hover:bg-slate-800/40 transition">
+                                <td class="py-3.5 px-4 font-mono text-slate-400 font-bold">#{{ r.id }}</td>
+                                <td class="py-3.5 px-4 text-slate-400">{{ r.tanggal_beli or r.tanggal }}</td>
+                                <td class="py-3.5 px-4">
+                                    <div class="font-bold text-white flex items-center gap-1.5">
+                                        <span class="text-xs bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-300 uppercase">{{ r.merk }}</span>
+                                        <span>{{ r.nama_produk }}</span>
+                                    </div>
+                                </td>
+                                <td class="py-3.5 px-4 text-right font-mono font-bold text-amber-300">
+                                    Rp {{ "{:,.0f}".format(r.harga_beli).replace(',', '.') }}
+                                </td>
+                                <td class="py-3.5 px-4 text-slate-400">{{ r.pembayaran }}</td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                        READY
+                                    </span>
+                                </td>
+                                <td class="py-3.5 px-4 text-center">
+                                    <div class="flex items-center justify-center gap-1.5">
+                                        <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-lg text-xs transition shadow-sm cursor-pointer active:scale-95">
+                                            🤝 Jual
+                                        </button>
+                                        <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs transition border border-slate-700 cursor-pointer" title="Edit Data Stok">
+                                            ✏️
+                                        </button>
+                                        <button onclick="deleteRow({{ r.id }})" class="p-1.5 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-lg text-xs transition border border-slate-700 cursor-pointer" title="Hapus Stok">
+                                            🗑️
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="7" class="py-8 text-center text-slate-500 italic">
+                                    Belum ada unit di stok ready. Silakan klik <b>+ Stok Baru</b> untuk mencatat HP baru!
+                                </td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 2: BUKU PENJUALAN (SUDAH LAKU) -->
+        <div id="tab-content-penjualan" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
+            <!-- Header Controls -->
+            <div class="p-3.5 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div class="flex items-center justify-between">
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">Buku Penjualan Terjual</h3>
+                    <span class="sm:hidden text-xs font-mono text-emerald-400 font-bold">{{ recent_sales|length }} Trx</span>
+                </div>
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <div class="relative flex-1 sm:w-60">
+                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
+                        <input type="text" id="sales-search" placeholder="Cari nama HP..." class="w-full text-xs pl-8 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200 placeholder-slate-500 font-medium" oninput="filterSalesTable()">
+                    </div>
+
+                    <select id="sales-pay-filter" onchange="filterSalesTable()" class="text-xs px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200">
+                        <option value="ALL">Semua Bayar</option>
+                        {% for pm in payment_stats %}
+                        <option value="{{ pm.pembayaran }}">{{ pm.pembayaran }} ({{ pm.count }})</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="flex items-center gap-1.5 w-full sm:w-auto">
+                        <a href="/export/csv" class="flex-1 sm:flex-none justify-center px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
+                            <span>📥</span>
+                            <span>Excel</span>
+                        </a>
+
+                        <button onclick="printReport()" class="flex-1 sm:flex-none justify-center px-3 py-2 bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
+                            <span>🖨️</span>
+                            <span>PDF</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MOBILE CARD VIEW FOR PENJUALAN -->
+            <div class="sm:hidden divide-y divide-slate-800/80" id="sales-mobile-tbody">
+                {% for s in recent_sales %}
+                <div class="p-3.5 space-y-2 sale-row-mobile {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}">
+                    <div class="flex items-start justify-between gap-2">
+                        <div>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[9px] font-mono font-bold bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">{{ s.merk }}</span>
+                                <span class="text-[10px] font-mono text-slate-500">#{{ s.id }}</span>
+                                <span class="text-[10px] text-slate-400">{{ s.tanggal_jual or s.tanggal }}</span>
+                            </div>
+                            <h4 class="font-bold text-xs text-white mt-1">{{ s.nama_produk }}</h4>
+                        </div>
+                        <div class="text-right shrink-0">
+                            <span class="font-mono font-extrabold text-emerald-400 text-xs block">+Rp {{ "{:,.0f}".format(s.keuntungan).replace(',', '.') }}</span>
+                            <span class="text-[9px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">{{ "{:.1f}%".format(s.margin * 100) }}</span>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800/60 font-mono">
+                        <span>Beli: Rp {{ "{:,.0f}".format(s.harga_beli).replace(',', '.') }}</span>
+                        <span>➔</span>
+                        <span class="text-white font-bold">Jual: Rp {{ "{:,.0f}".format(s.harga_jual).replace(',', '.') }}</span>
+                        <span class="text-[10px] text-slate-300 font-sans font-bold bg-slate-800 px-1.5 py-0.5 rounded">{{ s.pembayaran }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- DESKTOP TABLE VIEW FOR PENJUALAN -->
+            <div class="hidden sm:block overflow-x-auto no-scrollbar">
+                <table class="w-full text-left border-collapse text-xs" id="sales-table">
+                    <thead>
+                        <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
+                            <th class="py-3 px-4">#</th>
+                            <th class="py-3 px-4">Tanggal Jual</th>
+                            <th class="py-3 px-4">Merk / Produk</th>
+                            <th class="py-3 px-4 text-center">Qty</th>
+                            <th class="py-3 px-4 text-right">Harga Beli</th>
+                            <th class="py-3 px-4 text-right">Harga Jual</th>
+                            <th class="py-3 px-4 text-right">Cuan Bersih</th>
+                            <th class="py-3 px-4 text-center">Margin</th>
+                            <th class="py-3 px-4">Pembayaran</th>
+                            <th class="py-3 px-4 text-center action-col">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/60" id="sales-tbody">
+                        {% for s in recent_sales %}
+                        <tr class="hover:bg-slate-800/40 transition sale-row {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}">
+                            <td class="py-3.5 px-4 font-mono text-slate-500 text-[11px]">{{ s.id }}</td>
+                            <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap">{{ s.tanggal_jual or s.tanggal }}</td>
+                            <td class="py-3.5 px-4">
+                                <div class="font-bold text-slate-100 flex items-center gap-1.5">
+                                    <span class="text-slate-400 text-[10px] font-mono uppercase bg-slate-800 px-1.5 py-0.5 rounded">{{ s.merk }}</span>
+                                    <span>{{ s.nama_produk }}</span>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4 text-center font-mono text-slate-300">{{ s.qty }}</td>
+                            <td class="py-3.5 px-4 text-right font-mono text-slate-300">
+                                Rp {{ "{:,.0f}".format(s.harga_beli).replace(',', '.') }}
+                            </td>
+                            <td class="py-3.5 px-4 text-right font-mono text-white font-semibold">
+                                Rp {{ "{:,.0f}".format(s.harga_jual).replace(',', '.') }}
+                            </td>
+                            <td class="py-3.5 px-4 text-right font-mono font-extrabold text-emerald-400">
+                                +Rp {{ "{:,.0f}".format(s.keuntungan).replace(',', '.') }}
+                            </td>
+                            <td class="py-3.5 px-4 text-center">
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                    {{ "{:.2f}%".format(s.margin * 100) }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4 whitespace-nowrap">
+                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
+                                    {{ s.pembayaran }}
+                                </span>
+                            </td>
+                            <td class="py-3.5 px-4 text-center action-col">
+                                <button onclick="deleteRow({{ s.id }})" class="p-1 hover:text-rose-400 text-slate-500 transition" title="Hapus Data">
+                                    🗑️
+                                </button>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Footer Pagination & Toggle Controls -->
+            <div class="p-3.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/40 flex flex-col sm:flex-row items-center justify-between gap-3 action-col">
+                <span class="text-xs text-slate-400 text-center sm:text-left">
+                    Menampilkan <b class="text-white" id="current-visible-count">10</b> dari <b class="text-white">{{ recent_sales|length }}</b> transaksi terbaru
+                </span>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleAllRows()" id="btn-toggle-all" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer">
+                        <span>📜</span>
+                        <span id="toggle-all-text">Tampilkan Semua ({{ recent_sales|length }})</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 3: GRAFIK & ANALITIK -->
+        <div id="tab-content-stats" class="hidden space-y-4">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+                
+                <!-- TREN BULANAN CHART -->
+                <div class="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                        <div>
+                            <h3 class="font-bold text-sm text-white">Tren Keuntungan &amp; Penjualan</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Pertumbuhan omset dan profit per periode</p>
+                        </div>
+                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">Bulanan</span>
+                    </div>
+                    <div class="h-56 sm:h-64 w-full">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- TOP PRODUK PALING CUAN -->
+                <div class="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
+                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
+                        <div>
+                            <h3 class="font-bold text-sm text-white">Top Produk Paling Cuan</h3>
+                            <p class="text-[11px] text-slate-400 mt-0.5">Kontribusi laba bersih tertinggi</p>
+                        </div>
+                        <span class="text-xs">🏆</span>
+                    </div>
+
+                    <div class="space-y-3">
+                        {% for p in top_products %}
+                        <div class="space-y-1">
+                            <div class="flex items-center justify-between text-xs">
+                                <span class="font-bold text-slate-200 truncate pr-2">{{ p.nama_produk }}</span>
+                                <span class="font-mono font-extrabold text-emerald-400 shrink-0">
+                                    +Rp {{ "{:,.0f}".format(p.total_profit).replace(',', '.') }}
+                                </span>
+                            </div>
+                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
+                                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: {{ [100, (p.total_profit / top_products[0].total_profit * 100)]|min }}%"></div>
+                            </div>
+                            <div class="flex items-center justify-between text-[10px] text-slate-500">
+                                <span>{{ p.qty_sold }} unit laku</span>
+                                <span>Omset: Rp {{ "{:,.0f}".format(p.total_revenue).replace(',', '.') }}</span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- TAB CONTENT 4: SIMULASI & TRACKER PAJAK UMKM (PP 55/2022 & UU HPP) -->
+        <div id="tab-content-pajak" class="hidden space-y-4">
+            <!-- Header Kartu Status Pajak -->
+            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
+                    <div class="space-y-1">
+                        <div class="flex items-center gap-2">
+                            <span class="text-xl">⚖️</span>
+                            <h3 class="font-extrabold text-base sm:text-lg text-white">Status Pajak Bisnis HP (PPh Final UMKM)</h3>
+                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                                PP 55 / 2022
+                            </span>
+                        </div>
+                        <p class="text-xs text-slate-400">Dasar perhitungan resmi UU HPP: Omset s.d Rp 500 Juta bebas pajak. Kelebihan s.d Rp 4.8 Miliar dikenakan tarif final 0,5%.</p>
+                    </div>
+                    <div class="text-left sm:text-right shrink-0">
+                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Status Perpajakan Saat Ini</span>
+                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold mt-1
+                            {% if tax_info.status_color == 'emerald' %}
+                                bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
+                            {% elif tax_info.status_color == 'amber' %}
+                                bg-amber-500/20 text-amber-300 border border-amber-500/30
+                            {% else %}
+                                bg-rose-500/20 text-rose-300 border border-rose-500/30
+                            {% endif %}">
+                            <span class="w-2 h-2 rounded-full animate-ping
+                                {% if tax_info.status_color == 'emerald' %}bg-emerald-400{% elif tax_info.status_color == 'amber' %}bg-amber-400{% else %}bg-rose-400{% endif %}"></span>
+                            {{ tax_info.status }}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- 3 Kotak Ringkasan Angka Pajak -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
+                    <!-- Kotak 1: Total Omset Riil -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">1. Total Omset (Akumulasi)</span>
+                        <div class="text-lg font-mono font-extrabold text-white mt-1">
+                            Rp {{ "{:,.0f}".format(tax_info.omset).replace(',', '.') }}
+                        </div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">Total nilai HP yang terjual</span>
+                    </div>
+
+                    <!-- Kotak 2: Omset Kena Pajak (DPP) -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">2. Omset Kena Pajak (DPP)</span>
+                        <div class="text-lg font-mono font-extrabold text-amber-300 mt-1">
+                            Rp {{ "{:,.0f}".format(tax_info.taxable_omset).replace(',', '.') }}
+                        </div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">Kelebihan di atas batas 500 Juta</span>
+                    </div>
+
+                    <!-- Kotak 3: Estimasi Tagihan Pajak (0.5%) -->
+                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
+                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">3. Estimasi Pajak Terutang (0,5%)</span>
+                        <div class="text-lg font-mono font-extrabold 
+                            {% if tax_info.tax_amount == 0 %}text-emerald-400{% else %}text-amber-400{% endif %} mt-1">
+                            Rp {{ "{:,.0f}".format(tax_info.tax_amount).replace(',', '.') }}
+                        </div>
+                        <span class="text-[10px] text-slate-500 mt-0.5 block">
+                            {% if tax_info.tax_amount == 0 %}
+                            Aman! Belum wajib bayar pajak
+                            {% else %}
+                            0,5% × Omset Kena Pajak
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Progress Bar Menuju Batas 4.8 Miliar (Batas PKP) -->
+                <div class="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
+                    <div class="flex items-center justify-between text-xs font-bold">
+                        <span class="text-slate-300">Posisi Omset Menuju Batas Maksimal UMKM (Rp 4,8 Miliar)</span>
+                        <span class="font-mono text-indigo-400">{{ "{:.1f}%".format(tax_info.pct_to_pkp) }}</span>
+                    </div>
+                    <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
+                        <div class="bg-gradient-to-r from-emerald-500 via-amber-500 to-indigo-500 h-2 rounded-full transition-all duration-500" 
+                             style="width: {{ [100, tax_info.pct_to_pkp]|min }}%"></div>
+                    </div>
+                    <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono">
+                        <span>Rp 0</span>
+                        <span class="text-emerald-400 font-bold">Bebas Pajak (500 Jt)</span>
+                        <span class="text-indigo-400 font-bold">Maksimal UMKM (4.8 M)</span>
+                    </div>
+                </div>
+
+                <!-- TABEL TINGKATAN PAJAK SESUAI OMSET (REFERENSI RESMI) -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-xs border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 font-bold text-[11px]">
+                                <th class="py-2.5 px-3">Rentang Omset Setahun</th>
+                                <th class="py-2.5 px-3">Tarif Pajak</th>
+                                <th class="py-2.5 px-3">Aturan / Dasar Hukum</th>
+                                <th class="py-2.5 px-3">Kewajiban Pembukuan</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/60 font-medium">
+                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset <= 500000000 %}bg-emerald-500/5 text-emerald-300 font-bold{% endif %}">
+                                <td class="py-2.5 px-3">Rp 0 s.d Rp 500 Juta</td>
+                                <td class="py-2.5 px-3 text-emerald-400 font-bold">0% (Rp 0 / Bebas)</td>
+                                <td class="py-2.5 px-3 text-slate-400">UU HPP Pasal 7 ayat (2a)</td>
+                                <td class="py-2.5 px-3 text-slate-400">Pencatatan sederhana (GadgetFlow)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset > 500000000 and tax_info.omset <= 4800000000 %}bg-amber-500/5 text-amber-300 font-bold{% endif %}">
+                                <td class="py-2.5 px-3">Rp 500 Juta s.d Rp 4,8 Miliar</td>
+                                <td class="py-2.5 px-3 text-amber-400 font-bold">0,5% (Final)</td>
+                                <td class="py-2.5 px-3 text-slate-400">PP No. 55 Tahun 2022</td>
+                                <td class="py-2.5 px-3 text-slate-400">Pencatatan sederhana (GadgetFlow)</td>
+                            </tr>
+                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset > 4800000000 %}bg-rose-500/5 text-rose-300 font-bold{% endif %}">
+                                <td class="py-2.5 px-3">&gt; Rp 4,8 Miliar (Korporat)</td>
+                                <td class="py-2.5 px-3 text-rose-400 font-bold">Tarif Normal + PPN 11%</td>
+                                <td class="py-2.5 px-3 text-slate-400">Wajib PKP &amp; PPh Badan/Umum</td>
+                                <td class="py-2.5 px-3 text-slate-400">Wajib Akuntansi &amp; Neraca Lengkap</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+
+    </main>
+
+    <!-- MODAL 1: INPUT BELI STOK MASUK (KULAKAN) -->
+    <div id="buy-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">📦</span>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">Catat Stok Kulakan Baru</h3>
+                </div>
+                <button onclick="closeBuyModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+
+            <form onsubmit="submitBuy(event)" class="space-y-3 text-xs">
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Pilih Merk Smartphone</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="selectBrand('APPLE')" class="brand-btn p-2 rounded-xl bg-slate-800 border border-emerald-500 font-bold text-white text-center">🍏 Apple</button>
+                        <button type="button" onclick="selectBrand('POCO')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🟡 Poco</button>
+                        <button type="button" onclick="selectBrand('SAMSUNG')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🔵 Samsung</button>
+                        <button type="button" onclick="selectBrand('INFINIX')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🟠 Infinix</button>
+                        <button type="button" onclick="selectBrand('ITEL')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🔴 itel</button>
+                        <button type="button" onclick="selectBrand('XIAOMI')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">⚪ Xiaomi</button>
+                    </div>
+                    <input type="hidden" id="buy-merk" value="APPLE">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Tipe / Seri Smartphone</label>
+                    <input type="text" id="buy-nama" required placeholder="misal: IPHONE 15 PINK 128GB" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Harga Beli (Modal Kulakan)</label>
+                    <input type="number" id="buy-harga" required placeholder="misal: 9700000" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-sm font-bold text-amber-300">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Metode Bayar</label>
+                        <input type="text" id="buy-bayar" value="BCA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Tanggal Beli</label>
+                        <input type="date" id="buy-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl transition shadow-lg shadow-emerald-500/25 mt-2 cursor-pointer">
+                    Simpan ke Stok Ready
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 2: KONVERSI JUAL UNIT READY -->
+    <div id="sell-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">💰</span>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">Catat Unit Terjual</h3>
+                </div>
+                <button onclick="closeSellModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+
+            <form onsubmit="submitSell(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="sell-id">
+                
+                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-1">
+                    <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Unit Yang Terjual:</div>
+                    <div class="font-bold text-sm text-white" id="sell-product-display">-</div>
+                    <div class="text-xs font-mono text-slate-400">
+                        Modal Beli: <span class="text-amber-300 font-bold" id="sell-modal-display">Rp 0</span>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Harga Jual (Deal ke Pembeli)</label>
+                    <input type="number" id="sell-harga" required placeholder="misal: 10500000" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-base font-bold text-emerald-400" oninput="calcSellPreview()">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Metode Diterima</label>
+                        <input type="text" id="sell-bayar" value="BCA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Tanggal Jual</label>
+                        <input type="date" id="sell-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    </div>
+                </div>
+
+                <!-- Preview Cuan -->
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-medium">Cuan Bersih</div>
+                        <div id="sell-preview-cuan" class="font-mono font-bold text-emerald-400 text-sm">+Rp 0</div>
+                    </div>
+                    <div>
+                        <div class="text-[10px] text-slate-400 font-medium text-right">Margin</div>
+                        <div id="sell-preview-margin" class="font-mono font-bold text-amber-400 text-sm text-right">0.00%</div>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl transition shadow-lg shadow-emerald-500/25 mt-2 cursor-pointer">
+                    Konfirmasi Penjualan Selesai
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL 3: EDIT DATA STOK READY -->
+    <div id="edit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">✏️</span>
+                    <h3 class="font-extrabold text-sm sm:text-base text-white">Edit Data Stok Ready</h3>
+                </div>
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+            </div>
+
+            <form onsubmit="submitEdit(event)" class="space-y-3.5 text-xs">
+                <input type="hidden" id="edit-id">
+                
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Merk Smartphone</label>
+                    <select id="edit-merk" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                        <option value="APPLE">Apple</option>
+                        <option value="POCO">Poco</option>
+                        <option value="SAMSUNG">Samsung</option>
+                        <option value="INFINIX">Infinix</option>
+                        <option value="ITEL">itel</option>
+                        <option value="XIAOMI">Xiaomi / Redmi</option>
+                        <option value="LAINNYA">Lainnya</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Nama / Tipe Produk</label>
+                    <input type="text" id="edit-nama" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                </div>
+
+                <div>
+                    <label class="block font-bold text-slate-300 mb-1">Harga Modal Beli</label>
+                    <input type="number" id="edit-harga" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-emerald-400 font-bold">
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Metode Bayar Beli</label>
+                        <input type="text" id="edit-bayar" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                    </div>
+                    <div>
+                        <label class="block font-bold text-slate-300 mb-1">Tanggal Beli</label>
+                        <input type="date" id="edit-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold rounded-xl transition shadow-lg shadow-blue-600/25 mt-2 cursor-pointer">
+                    Simpan Perubahan
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        const todayStr = new Date().toISOString().split('T')[0];
+        document.getElementById('buy-tgl').value = todayStr;
+        document.getElementById('sell-tgl').value = todayStr;
+
+        let currentActiveCost = 0;
+
+        function switchTab(tab) {
+            const btnR = document.getElementById('tab-btn-ready');
+            const btnP = document.getElementById('tab-btn-penjualan');
+            const btnS = document.getElementById('tab-btn-stats');
+            const btnT = document.getElementById('tab-btn-pajak');
+
+            const conR = document.getElementById('tab-content-ready');
+            const conP = document.getElementById('tab-content-penjualan');
+            const conS = document.getElementById('tab-content-stats');
+            const conT = document.getElementById('tab-content-pajak');
+
+            [btnR, btnP, btnS, btnT].forEach(b => {
+                if (!b) return;
+                b.classList.remove('active');
+                b.classList.add('text-slate-400');
+            });
+            [conR, conP, conS, conT].forEach(c => {
+                if (c) c.classList.add('hidden');
+            });
+
+            if (tab === 'ready') {
+                btnR.classList.add('active');
+                btnR.classList.remove('text-slate-400');
+                conR.classList.remove('hidden');
+            } else if (tab === 'penjualan') {
+                btnP.classList.add('active');
+                btnP.classList.remove('text-slate-400');
+                conP.classList.remove('hidden');
+            } else if (tab === 'stats') {
+                btnS.classList.add('active');
+                btnS.classList.remove('text-slate-400');
+                conS.classList.remove('hidden');
+            } else if (tab === 'pajak') {
+                btnT.classList.add('active');
+                btnT.classList.remove('text-slate-400');
+                conT.classList.remove('hidden');
+            }
+        }
+
+        function selectBrand(brand) {
+            document.getElementById('buy-merk').value = brand;
+            document.querySelectorAll('.brand-btn').forEach(btn => {
+                if (btn.innerText.toUpperCase().includes(brand)) {
+                    btn.classList.add('border-emerald-500', 'bg-slate-800', 'text-white');
+                    btn.classList.remove('border-slate-800', 'bg-slate-950', 'text-slate-300');
+                } else {
+                    btn.classList.remove('border-emerald-500', 'bg-slate-800', 'text-white');
+                    btn.classList.add('border-slate-800', 'bg-slate-950', 'text-slate-300');
+                }
+            });
+        }
+
+        function openBuyModal() {
+            document.getElementById('buy-modal').classList.remove('hidden');
+            document.getElementById('buy-modal').classList.add('flex');
+        }
+
+        function closeBuyModal() {
+            document.getElementById('buy-modal').classList.add('hidden');
+            document.getElementById('buy-modal').classList.remove('flex');
+        }
+
+        function openEditModal(id, merk, nama, harga, bayar, tgl) {
+            document.getElementById('edit-id').value = id;
+            document.getElementById('edit-merk').value = merk || 'APPLE';
+            document.getElementById('edit-nama').value = nama;
+            document.getElementById('edit-harga').value = harga;
+            document.getElementById('edit-bayar').value = bayar || 'CASH';
+            document.getElementById('edit-tgl').value = tgl || todayStr;
+
+            document.getElementById('edit-modal').classList.remove('hidden');
+            document.getElementById('edit-modal').classList.add('flex');
+        }
+
+        function closeEditModal() {
+            document.getElementById('edit-modal').classList.add('hidden');
+            document.getElementById('edit-modal').classList.remove('flex');
+        }
+
+        async function submitEdit(e) {
+            e.preventDefault();
+            const data = {
+                id: parseInt(document.getElementById('edit-id').value),
+                merk: document.getElementById('edit-merk').value,
+                nama_produk: document.getElementById('edit-nama').value,
+                harga_beli: parseFloat(document.getElementById('edit-harga').value),
+                pembayaran: document.getElementById('edit-bayar').value,
+                tanggal_beli: document.getElementById('edit-tgl').value
+            };
+
+            const res = await fetch('/api/stock/update', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                location.reload();
+            } else {
+                alert('Gagal mengupdate data stok!');
+            }
+        }
+
+        function openSellModal(id, name, cost) {
+            document.getElementById('sell-id').value = id;
+            document.getElementById('sell-product-display').innerText = name;
+            document.getElementById('sell-modal-display').innerText = 'Rp ' + cost.toLocaleString('id-ID');
+            currentActiveCost = cost;
+            document.getElementById('sell-harga').value = '';
+            document.getElementById('sell-preview-cuan').innerText = '+Rp 0';
+            document.getElementById('sell-preview-margin').innerText = '0.00%';
+
+            document.getElementById('sell-modal').classList.remove('hidden');
+            document.getElementById('sell-modal').classList.add('flex');
+        }
+
+        function closeSellModal() {
+            document.getElementById('sell-modal').classList.add('hidden');
+            document.getElementById('sell-modal').classList.remove('flex');
+        }
+
+        function calcSellPreview() {
+            const jual = parseFloat(document.getElementById('sell-harga').value) || 0;
+            const untung = jual - currentActiveCost;
+            const margin = jual > 0 ? (untung / jual) * 100 : 0;
+            
+            document.getElementById('sell-preview-cuan').innerText = (untung >= 0 ? '+Rp ' : '-Rp ') + Math.abs(untung).toLocaleString('id-ID');
+            document.getElementById('sell-preview-margin').innerText = margin.toFixed(2) + '%';
+        }
+
+        async function submitBuy(e) {
+            e.preventDefault();
+            const data = {
+                merk: document.getElementById('buy-merk').value,
+                nama_produk: document.getElementById('buy-nama').value,
+                harga_beli: parseFloat(document.getElementById('buy-harga').value),
+                pembayaran: document.getElementById('buy-bayar').value,
+                tanggal: document.getElementById('buy-tgl').value
+            };
+
+            const res = await fetch('/api/stock/buy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                location.reload();
+            } else {
+                alert('Gagal menyimpan stok!');
+            }
+        }
+
+        async function submitSell(e) {
+            e.preventDefault();
+            const data = {
+                id: parseInt(document.getElementById('sell-id').value),
+                harga_jual: parseFloat(document.getElementById('sell-harga').value),
+                pembayaran: document.getElementById('sell-bayar').value,
+                tanggal_jual: document.getElementById('sell-tgl').value
+            };
+
+            const res = await fetch('/api/stock/sell', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+
+            if (res.ok) {
+                location.reload();
+            } else {
+                alert('Gagal memproses penjualan!');
+            }
+        }
+
+        async function deleteRow(id) {
+            if (confirm(`Yakin ingin menghapus data #${id}?`)) {
+                const res = await fetch(`/api/sales/${id}`, { method: 'DELETE' });
+                if (res.ok) {
+                    location.reload();
+                } else {
+                    alert('Gagal menghapus');
+                }
+            }
+        }
+
+        function filterSalesTable() {
+            const q = document.getElementById('sales-search').value.toLowerCase().trim();
+            const pay = document.getElementById('sales-pay-filter').value;
+            
+            // Filter desktop table
+            document.querySelectorAll('.sale-row').forEach(row => {
+                const prod = row.dataset.product || '';
+                const p = row.dataset.payment || '';
+
+                const matchesQ = !q || prod.includes(q) || p.toLowerCase().includes(q);
+                const matchesPay = (pay === 'ALL' || p === pay);
+
+                if (matchesQ && matchesPay) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+
+            // Filter mobile cards
+            document.querySelectorAll('.sale-row-mobile').forEach(card => {
+                const prod = card.dataset.product || '';
+                const p = card.dataset.payment || '';
+
+                const matchesQ = !q || prod.includes(q) || p.toLowerCase().includes(q);
+                const matchesPay = (pay === 'ALL' || p === pay);
+
+                if (matchesQ && matchesPay) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        let isShowingAll = false;
+        const totalSalesCount = {{ recent_sales|length }};
+
+        function toggleAllRows() {
+            isShowingAll = !isShowingAll;
+            const extraRows = document.querySelectorAll('.extra-row');
+            const toggleText = document.getElementById('toggle-all-text');
+            const visibleCountEl = document.getElementById('current-visible-count');
+
+            if (isShowingAll) {
+                extraRows.forEach(row => row.classList.remove('hidden'));
+                toggleText.innerText = "🔼 Tampilkan 10 Terbaru";
+                if (visibleCountEl) visibleCountEl.innerText = totalSalesCount;
+            } else {
+                extraRows.forEach(row => row.classList.add('hidden'));
+                toggleText.innerText = `📜 Tampilkan Semua (${totalSalesCount})`;
+                if (visibleCountEl) visibleCountEl.innerText = "10";
+            }
+        }
+
+        function printReport() {
+            const extraRows = document.querySelectorAll('.extra-row');
+            extraRows.forEach(row => row.classList.remove('hidden'));
+            window.print();
+            if (!isShowingAll) {
+                extraRows.forEach(row => row.classList.add('hidden'));
+            }
+        }
+
+        // Render Monthly Chart
+        async function initCharts() {
+            const res = await fetch('/api/stats');
+            const data = await res.json();
+
+            const ctx = document.getElementById('monthlyChart').getContext('2d');
+            const labels = data.monthly.map(m => m.month || 'Periode');
+            const revenues = data.monthly.map(m => m.jual);
+            const profits = data.monthly.map(m => m.untung);
+
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Cuan Bersih (Profit)',
+                            data: profits,
+                            backgroundColor: '#10B981',
+                            borderRadius: 6,
+                            order: 1
+                        },
+                        {
+                            label: 'Total Penjualan (Omset)',
+                            data: revenues,
+                            type: 'line',
+                            borderColor: '#3B82F6',
+                            borderWidth: 2,
+                            pointBackgroundColor: '#3B82F6',
+                            tension: 0.3,
+                            order: 0,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94A3B8', font: { size: 10 } }
+                        },
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: {
+                                color: '#10B981',
+                                font: { size: 10 },
+                                callback: val => 'Rp ' + (val / 1000000).toFixed(0) + ' Jt'
+                            }
+                        },
+                        y1: {
+                            position: 'right',
+                            grid: { display: false },
+                            ticks: {
+                                color: '#3B82F6',
+                                font: { size: 10 },
+                                callback: val => 'Rp ' + (val / 1000000).toFixed(0) + ' Jt'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { color: '#E2E8F0', font: { size: 11 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        initCharts();
+    </script>
+</body>
+</html>

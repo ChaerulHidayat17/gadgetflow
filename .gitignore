@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+*.sqlite
+*.db
+*.db-shm
+*.db-wal
+.bot_token
+*.log
+.env
+.DS_Store
