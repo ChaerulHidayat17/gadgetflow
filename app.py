@@ -8,7 +8,17 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "data.sqlite")
+if os.environ.get("VERCEL"):
+    import shutil
+    DB_PATH = "/tmp/data.sqlite"
+    orig_db = os.path.join(BASE_DIR, "data.sqlite")
+    if not os.path.exists(DB_PATH) and os.path.exists(orig_db):
+        try:
+            shutil.copyfile(orig_db, DB_PATH)
+        except Exception:
+            pass
+else:
+    DB_PATH = os.path.join(BASE_DIR, "data.sqlite")
 TEMPLATES_DIR = os.path.join(BASE_DIR, "templates")
 
 app = FastAPI(title="GadgetFlow — Platform Penjualan & Stok HP")
@@ -40,6 +50,22 @@ def init_db():
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )
     ''')
+
+    c.execute("SELECT COUNT(*) FROM penjualan")
+    if c.fetchone()[0] == 0:
+        samples = [
+            ("2026-10-25", "iPhone 13 128GB Starlight", "APPLE", 1, 7520000.0, 8050000.0, "CASH", 530000.0, 7.05, "TERJUAL", "2026-10-22", "2026-10-25"),
+            ("2026-10-27", "iPhone 11 64GB Black", "APPLE", 1, 4100000.0, 4600000.0, "TRANSFER", 500000.0, 12.2, "TERJUAL", "2026-10-24", "2026-10-27"),
+            ("2026-10-28", "Samsung Galaxy A55 5G", "SAMSUNG", 1, 4900000.0, 5350000.0, "QRIS", 450000.0, 9.18, "TERJUAL", "2026-10-26", "2026-10-28"),
+            ("2026-10-29", "Infinix Note 40 Pro", "INFINIX", 1, 3100000.0, 3450000.0, "CASH", 350000.0, 11.29, "TERJUAL", "2026-10-27", "2026-10-29"),
+            ("2026-10-30", "iPhone 14 128GB Blue", "APPLE", 1, 9800000.0, 0, "CASH", 0, 0, "READY", "2026-10-30", None),
+            ("2026-10-31", "Xiaomi Redmi Note 13 Pro", "XIAOMI", 1, 3200000.0, 0, "TRANSFER", 0, 0, "READY", "2026-10-31", None),
+        ]
+        c.executemany('''
+        INSERT INTO penjualan (tanggal, nama_produk, merk, qty, harga_beli, harga_jual, pembayaran, keuntungan, margin, status, tanggal_beli, tanggal_jual)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', samples)
+
     conn.commit()
     conn.close()
 
