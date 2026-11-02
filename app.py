@@ -194,6 +194,54 @@ async def index(request: Request):
     # 7. Tax Estimation Calculator (UU HPP & PP 55/2022)
     tax_info = calculate_tax(stats.get("total_omset", 0))
 
+    # 8. Monthly Profit & Performance Breakdown
+    MONTH_NAMES = {
+        '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+        '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+        '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+    }
+    c.execute('''
+        SELECT 
+            COALESCE(NULLIF(SUBSTR(tanggal_jual, 1, 7), ''), SUBSTR(tanggal, 1, 7)) as month,
+            COUNT(*) as total_unit,
+            COALESCE(SUM(harga_beli), 0) as total_modal,
+            COALESCE(SUM(harga_jual), 0) as total_omset,
+            COALESCE(SUM(keuntungan), 0) as total_profit,
+            ROUND((COALESCE(SUM(keuntungan), 0) / NULLIF(SUM(harga_jual), 0)) * 100, 2) as margin_pct,
+            ROUND(COALESCE(SUM(keuntungan), 0) / COUNT(*), 0) as avg_profit_per_unit
+        FROM penjualan
+        WHERE status = 'TERJUAL' AND tanggal IS NOT NULL AND tanggal != ''
+        GROUP BY month
+        ORDER BY month DESC
+    ''')
+    monthly_profits = []
+    best_month = None
+    max_p = -1.0
+    total_p_all = 0.0
+    for row in c.fetchall():
+        d = dict(row)
+        parts = d["month"].split("-") if d["month"] and "-" in d["month"] else ["2026", "01"]
+        year = parts[0]
+        m_num = parts[1]
+        d["year"] = year
+        d["month_num"] = m_num
+        d["month_name"] = MONTH_NAMES.get(m_num, m_num)
+        d["month_label"] = f"{d['month_name']} {year}"
+        d["est_tax_monthly"] = round(d["total_omset"] * 0.005, 0)
+        total_p_all += float(d["total_profit"])
+        if float(d["total_profit"]) > max_p:
+            max_p = float(d["total_profit"])
+            best_month = d
+        monthly_profits.append(d)
+
+    monthly_summary = {
+        "total_months": len(monthly_profits),
+        "total_profit_all": total_p_all,
+        "avg_monthly_profit": round(total_p_all / len(monthly_profits), 0) if monthly_profits else 0,
+        "best_month": best_month,
+        "latest_month": monthly_profits[0] if monthly_profits else None
+    }
+
     conn.close()
 
     return templates.TemplateResponse(
@@ -205,7 +253,9 @@ async def index(request: Request):
             "ready_stocks": ready_stocks,
             "recent_sales": recent_sales,
             "payment_stats": payment_stats,
-            "top_products": top_products
+            "top_products": top_products,
+            "monthly_profits": monthly_profits,
+            "monthly_summary": monthly_summary
         }
     )
 
@@ -217,13 +267,13 @@ async def api_stats():
     # Monthly breakdown for chart
     c.execute('''
         SELECT 
-            SUBSTR(tanggal_jual, 1, 7) as month,
+            COALESCE(NULLIF(SUBSTR(tanggal_jual, 1, 7), ''), SUBSTR(tanggal, 1, 7)) as month,
             COUNT(*) as total_unit,
             SUM(harga_beli) as beli,
             SUM(harga_jual) as jual,
             SUM(keuntungan) as untung
         FROM penjualan
-        WHERE status = 'TERJUAL' AND tanggal_jual IS NOT NULL AND tanggal_jual != ''
+        WHERE status = 'TERJUAL' AND tanggal IS NOT NULL AND tanggal != ''
         GROUP BY month
         ORDER BY month ASC
     ''')
@@ -268,6 +318,65 @@ async def api_stats():
         "modal_tertahan": r_row[1],
         "tax": tax_info
     }
+
+@app.get("/api/monthly-profits")
+async def api_monthly_profits(month: Optional[str] = Query(None)):
+    MONTH_NAMES = {
+        '01': 'Januari', '02': 'Februari', '03': 'Maret', '04': 'April',
+        '05': 'Mei', '06': 'Juni', '07': 'Juli', '08': 'Agustus',
+        '09': 'September', '10': 'Oktober', '11': 'November', '12': 'Desember'
+    }
+    conn = get_db()
+    c = conn.cursor()
+    if month:
+        c.execute('''
+            SELECT * FROM penjualan 
+            WHERE status = 'TERJUAL' 
+              AND (tanggal_jual LIKE ? OR (tanggal_jual IS NULL AND tanggal LIKE ?))
+            ORDER BY id DESC
+        ''', (f"{month}%", f"{month}%"))
+        items = [dict(r) for r in c.fetchall()]
+
+        c.execute('''
+            SELECT 
+                COUNT(*) as unit_count,
+                COALESCE(SUM(harga_beli), 0) as total_modal,
+                COALESCE(SUM(harga_jual), 0) as total_omset,
+                COALESCE(SUM(keuntungan), 0) as total_profit,
+                ROUND((COALESCE(SUM(keuntungan), 0) / NULLIF(SUM(harga_jual), 0)) * 100, 2) as margin_pct
+            FROM penjualan 
+            WHERE status = 'TERJUAL' 
+              AND (tanggal_jual LIKE ? OR (tanggal_jual IS NULL AND tanggal LIKE ?))
+        ''', (f"{month}%", f"{month}%"))
+        summary = dict(c.fetchone())
+        conn.close()
+        return {"month": month, "summary": summary, "items": items}
+
+    c.execute('''
+        SELECT 
+            COALESCE(NULLIF(SUBSTR(tanggal_jual, 1, 7), ''), SUBSTR(tanggal, 1, 7)) as month,
+            COUNT(*) as total_unit,
+            COALESCE(SUM(harga_beli), 0) as total_modal,
+            COALESCE(SUM(harga_jual), 0) as total_omset,
+            COALESCE(SUM(keuntungan), 0) as total_profit,
+            ROUND((COALESCE(SUM(keuntungan), 0) / NULLIF(SUM(harga_jual), 0)) * 100, 2) as margin_pct,
+            ROUND(COALESCE(SUM(keuntungan), 0) / COUNT(*), 0) as avg_profit_per_unit
+        FROM penjualan
+        WHERE status = 'TERJUAL' AND tanggal IS NOT NULL AND tanggal != ''
+        GROUP BY month
+        ORDER BY month DESC
+    ''')
+    rows = []
+    for r in c.fetchall():
+        d = dict(r)
+        parts = d["month"].split("-") if d["month"] and "-" in d["month"] else ["2026", "01"]
+        year = parts[0]
+        m_num = parts[1]
+        d["month_name"] = MONTH_NAMES.get(m_num, m_num)
+        d["month_label"] = f"{d['month_name']} {year}"
+        rows.append(d)
+    conn.close()
+    return {"monthly": rows}
 
 @app.get("/api/stock/ready")
 async def api_get_ready(q: Optional[str] = Query(None)):
