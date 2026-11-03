@@ -12,9 +12,10 @@ if os.environ.get("VERCEL"):
     import shutil
     DB_PATH = "/tmp/data.sqlite"
     orig_db = os.path.join(BASE_DIR, "data.sqlite")
-    if not os.path.exists(DB_PATH) and os.path.exists(orig_db):
+    if os.path.exists(orig_db):
         try:
-            shutil.copyfile(orig_db, DB_PATH)
+            if not os.path.exists(DB_PATH) or os.path.getmtime(orig_db) > os.path.getmtime(DB_PATH):
+                shutil.copyfile(orig_db, DB_PATH)
         except Exception:
             pass
 else:

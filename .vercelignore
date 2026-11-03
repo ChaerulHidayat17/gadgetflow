@@ -1,0 +1,7 @@
+.venv
+__pycache__
+*.pyc
+.bot_token
+*.log
+.env
+.DS_Store
