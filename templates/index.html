@@ -1,40 +1,155 @@
 <!DOCTYPE html>
-<html lang="id" class="h-full bg-slate-950 text-slate-100">
+<html lang="id" class="h-full bg-[#fbfbfb] text-[#000000]">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>GadgetFlow — Rekap & Analitik Penjualan HP</title>
+    <title>GadgetFlow — Technical Ledger &amp; Inventory Manual</title>
+    
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#fbfbfb',
+                        ink: '#000000',
+                        blueprint: '#103dff',
+                        schematic: '#0043ff',
+                        ash: '#7d7d7d',
+                        periwinkle: '#97acff',
+                        cornflower: '#b6c8ff',
+                        ice: '#e6ebff',
+                        mist: '#f4f5f9',
+                        hairline: '#e1e1e1'
+                    }
+                }
+            }
+        }
+    </script>
+
     <!-- Chart.js CDN -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Fonts -->
+
+    <!-- Google Fonts: EB Garamond (Arizona substitute) & JetBrains Mono (Departure Mono substitute) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
     <style>
         * {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             -webkit-tap-highlight-color: transparent;
         }
+        body {
+            background-color: #fbfbfb;
+            color: #000000;
+            font-family: 'EB Garamond', Georgia, serif;
+            letter-spacing: 0px;
+        }
+        .font-serif {
+            font-family: 'EB Garamond', Georgia, serif;
+        }
         .font-mono {
-            font-family: 'JetBrains Mono', monospace !important;
+            font-family: 'JetBrains Mono', 'Departure Mono', 'Courier New', monospace !important;
+            letter-spacing: 0px;
         }
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        /* Glow effects */
-        .glow-emerald {
-            box-shadow: 0 0 25px -5px rgba(16, 185, 129, 0.25);
+
+        /* Blueprint Bevelled Key Button */
+        .key-btn {
+            height: 28px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1px solid rgba(0, 0, 0, 0.45);
+            border-radius: 4px;
+            padding: 0 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            font-weight: 500;
+            text-transform: uppercase;
+            color: #000000;
+            box-shadow: rgba(255, 255, 255, 0.75) 1px 1px 0px 2px inset, rgba(0, 0, 0, 0.1) -1px -1px 0px 2px inset;
+            transition: all 0.1s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            cursor: pointer;
+            text-decoration: none;
+            line-height: 1;
         }
-        
-        .main-tab-btn.active {
-            background-color: #10B981 !important;
-            color: #022C22 !important;
-            font-weight: 800;
+        .key-btn:hover {
+            background: #ffffff;
+            border-color: #000000;
+        }
+        .key-btn:active {
+            transform: translateY(1px);
+            box-shadow: rgba(0, 0, 0, 0.15) 1px 1px 0px 1px inset;
+        }
+        .key-btn-primary {
+            background: #e6ebff;
+            border-color: #103dff;
+            color: #103dff;
+            font-weight: 700;
+        }
+        .key-btn-primary:hover {
+            background: #d4e0ff;
+        }
+        .key-btn-danger {
+            background: #fff0f0;
+            border-color: #e11d48;
+            color: #e11d48;
         }
 
-        /* Clean Print / PDF Styling */
+        /* Ruled Tab Button */
+        .main-tab-btn {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid #e1e1e1;
+            background: #ffffff;
+            color: #7d7d7d;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            white-space: nowrap;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .main-tab-btn:hover {
+            color: #000000;
+            border-color: #7d7d7d;
+        }
+        .main-tab-btn.active {
+            background: #e6ebff !important;
+            border-color: #103dff !important;
+            color: #103dff !important;
+            font-weight: 700;
+        }
+
+        /* Technical Dotted Leader */
+        .dotted-leader {
+            flex-grow: 1;
+            border-bottom: 1px dotted #7d7d7d;
+            height: 13px;
+            margin: 0 8px;
+            opacity: 0.55;
+        }
+
+        /* Technical double-dash glyph rule */
+        .glyph-rule {
+            color: #7d7d7d;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            letter-spacing: 2.5px;
+            user-select: none;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+
+        /* Clean Print / Book Styling */
         @media print {
             body {
                 background: white !important;
@@ -43,280 +158,284 @@
             header, .action-col, #monthlyChart, .main-tab-btn, button, #buy-modal, #sell-modal, #edit-modal, nav {
                 display: none !important;
             }
-            .bg-slate-900, .bg-slate-950, .bg-slate-900\/80, .bg-slate-900\/90 {
-                background: white !important;
-                border: 1px solid #E2E8F0 !important;
-                color: black !important;
-            }
-            .text-white, .text-slate-100, .text-slate-200, .text-slate-300 {
-                color: #0F172A !important;
-            }
-            .text-emerald-400 {
-                color: #059669 !important;
-                font-weight: bold !important;
+            .extra-row {
+                display: table-row !important;
             }
             table {
                 width: 100% !important;
                 border-collapse: collapse !important;
             }
             th, td {
-                border: 1px solid #CBD5E1 !important;
-                padding: 6px 8px !important;
-            }
-            .extra-row {
-                display: table-row !important;
+                border: 1px solid #000000 !important;
+                padding: 4px 6px !important;
             }
         }
     </style>
 </head>
-<body class="h-full flex flex-col bg-slate-950 text-slate-100 antialiased selection:bg-emerald-500 selection:text-slate-950">
+<body class="min-h-full flex flex-col bg-[#fbfbfb] text-[#000000] antialiased selection:bg-[#103dff] selection:text-[#ffffff]">
 
-    <!-- TOP NAVBAR -->
-    <header class="sticky top-0 z-30 bg-slate-900/90 backdrop-blur-md border-b border-slate-800">
-        <div class="max-w-7xl mx-auto px-3.5 sm:px-6 h-14 sm:h-16 flex items-center justify-between">
-            <div class="flex items-center space-x-2.5 sm:space-x-3">
-                <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-gradient-to-tr from-emerald-500 via-teal-500 to-cyan-500 flex items-center justify-center text-white text-lg sm:text-xl shadow-lg shadow-emerald-500/20 font-bold shrink-0">
-                    📱
+    <!-- PIXEL MASTHEAD BAR (MAKING SOFTWARE REFERENCE) -->
+    <header class="w-full max-w-[1536px] mx-auto px-4 sm:px-12 pt-6 pb-4">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 border-b border-[#000000] pb-4">
+            
+            <!-- Left: Blueprint Pixel Wordmark & Project Identifier -->
+            <div class="space-y-1">
+                <div class="flex items-center gap-2">
+                    <span class="inline-block w-2.5 h-2.5 bg-[#103dff]"></span>
+                    <span class="font-mono text-sm sm:text-base font-bold tracking-tight text-[#103dff] uppercase">
+                        GADGETFLOW // SPEC_MANUAL.2026
+                    </span>
+                    <span class="text-[10px] font-mono px-1.5 py-0.5 rounded-[4px] border border-[#103dff] text-[#103dff] bg-[#e6ebff] font-bold">
+                        VOL. 01
+                    </span>
                 </div>
-                <div>
-                    <div class="flex items-center gap-1.5">
-                        <h1 class="text-sm sm:text-lg font-extrabold tracking-tight text-white leading-none">GadgetFlow</h1>
-                        <span class="inline-flex px-1.5 py-0.2 rounded-full text-[9px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 uppercase tracking-wider">Pro</span>
+                <div class="text-[11px] font-mono text-[#7d7d7d] uppercase tracking-wide">
+                    REF_NO: GFL-HW-155-TERJUAL · BEKASI PLANT LEDGER
+                </div>
+            </div>
+
+            <!-- Right: Lede & Author Metadata in Bookish Serif & Key Buttons -->
+            <div class="flex flex-col sm:items-end gap-2.5">
+                <div class="text-left sm:text-right">
+                    <div class="font-serif text-sm sm:text-base italic text-[#000000] leading-tight">
+                        Reference manual for smartphone inventory, hardware diagnostic, and unit velocity.
                     </div>
-                    <p class="text-[10px] sm:text-xs text-slate-400 mt-0.5 font-medium truncate max-w-[180px] sm:max-w-none">Buku Penjualan &amp; Stok HP</p>
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase tracking-wider mt-0.5">
+                        AUTHOR: CHAERUL HIDAYAT · REVISED 2026.11
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-2">
+                    <button onclick="openBuyModal()" class="key-btn key-btn-primary">
+                        <span class="font-bold">+</span>
+                        <span>Input Stok Baru</span>
+                    </button>
+                    <a href="/export/csv" class="key-btn">
+                        <span>CSV Export</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Header Action Buttons -->
-            <div class="flex items-center space-x-2">
-                <button onclick="openBuyModal()" class="inline-flex items-center gap-1 px-3 py-1.5 sm:px-3.5 sm:py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 rounded-xl text-xs font-extrabold transition shadow-md shadow-emerald-500/20 cursor-pointer">
-                    <span class="text-sm font-bold">+</span>
-                    <span>Stok Baru</span>
-                </button>
-            </div>
+        </div>
+
+        <!-- Glyph Divider Strip of repeated dashes -->
+        <div class="glyph-rule pt-2 opacity-70">
+            -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- -- --
         </div>
     </header>
 
-    <!-- MAIN BODY CONTAINER -->
-    <main class="max-w-7xl mx-auto px-3.5 sm:px-6 w-full py-4 sm:py-6 flex-1 space-y-4 sm:space-y-6">
+    <!-- MAIN READING CONTAINER -->
+    <main class="w-full max-w-[1536px] mx-auto px-4 sm:px-12 py-6 flex-1 space-y-10">
 
-        <!-- SECTION 1: 4 EXECUTIVE METRIC CARDS (COMPACT & MOBILE-OPTIMIZED) -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+        <!-- SECTION 1: BLUEPRINT FIGURE & TECHNICAL SUMMARY SPREAD -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
             
-            <!-- CARD 1: TOTAL PENJUALAN (OMSET) -->
-            <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total Penjualan</span>
-                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-blue-500/20">
-                        🛒
-                    </span>
+            <!-- LEFT (7 COLS): EXECUTIVES BLUEPRINT LEDGER STATS -->
+            <div class="lg:col-span-7 space-y-4">
+                
+                <div class="flex items-center gap-3">
+                    <span class="font-mono text-[11px] text-[#7d7d7d] uppercase">SECTION 01.0 //</span>
+                    <h2 class="font-serif text-lg font-medium text-[#000000]">Ikhtisar Neraca Finansial &amp; Operasional.</h2>
                 </div>
-                <div class="mt-2 sm:mt-3">
-                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-white tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}">
-                        Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}
+
+                <!-- 4 Metrics as Bookish Technical Index Entries with Dotted Leaders -->
+                <div class="bg-[#ffffff] border border-[#e1e1e1] rounded-[4px] p-5 space-y-3.5 shadow-none">
+                    
+                    <!-- Entry 1: Gross Omset -->
+                    <div class="flex items-baseline justify-between text-xs sm:text-sm">
+                        <span class="font-mono text-[11px] uppercase text-[#7d7d7d] tracking-wider shrink-0">
+                            01. TOTAL AKUMULASI PENJUALAN (GROSS OMSET)
+                        </span>
+                        <div class="dotted-leader hidden sm:block"></div>
+                        <span class="font-mono text-sm sm:text-base font-bold text-[#000000] shrink-0">
+                            Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}
+                        </span>
                     </div>
-                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium flex items-center gap-1">
-                        <span class="text-blue-400 font-bold">{{ stats.total_units_sold }} Unit</span> terjual
+
+                    <!-- Entry 2: HPP Modal -->
+                    <div class="flex items-baseline justify-between text-xs sm:text-sm">
+                        <span class="font-mono text-[11px] uppercase text-[#7d7d7d] tracking-wider shrink-0">
+                            02. MODAL POKOK TERJUAL (HPP OUTLAY)
+                        </span>
+                        <div class="dotted-leader hidden sm:block"></div>
+                        <span class="font-mono text-sm sm:text-base text-[#7d7d7d] shrink-0">
+                            Rp {{ "{:,.0f}".format(stats.total_beli_terjual).replace(',', '.') }}
+                        </span>
                     </div>
+
+                    <!-- Entry 3: Net Profit -->
+                    <div class="flex items-baseline justify-between text-xs sm:text-sm pt-2 border-t border-[#e1e1e1]">
+                        <span class="font-mono text-[11px] uppercase text-[#103dff] font-bold tracking-wider shrink-0">
+                            03. KEUNTUNGAN BERSIH RIIL (ACCUMULATED NET PROFIT)
+                        </span>
+                        <div class="dotted-leader hidden sm:block"></div>
+                        <span class="font-mono text-base sm:text-lg font-extrabold text-[#103dff] shrink-0">
+                            +Rp {{ "{:,.0f}".format(stats.total_untung).replace(',', '.') }}
+                        </span>
+                    </div>
+
+                    <!-- Entry 4: Margin & Ready Stock -->
+                    <div class="flex items-baseline justify-between text-xs sm:text-sm">
+                        <span class="font-mono text-[11px] uppercase text-[#7d7d7d] tracking-wider shrink-0">
+                            04. RATA-RATA MARGIN · UNIT READY TERTOPANG
+                        </span>
+                        <div class="dotted-leader hidden sm:block"></div>
+                        <span class="font-mono text-xs sm:text-sm font-bold text-[#000000] shrink-0">
+                            {{ "{:.2f}%".format(stats.avg_margin * 100) }} · <span class="text-[#103dff]">{{ stats.ready_count }} Unit Ready</span> (Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }})
+                        </span>
+                    </div>
+
                 </div>
+
+                <!-- Descriptive Book Prose -->
+                <p class="font-serif text-sm text-[#000000] leading-relaxed text-justify">
+                    Buku catatan teknis ini merekam siklus perputaran inventaris perangkat keras bergerak (smartphones) dioperasikan secara berkala. Seluruh kalkulasi keuntungan bersih dihitung otomatis berdasarkan selisih harga jual riil dikurangi harga pokok pembelian (HPP) per nomor seri unit, disertai pencatatan kanal pembayaran dan kepatuhan tarif PPh Final UMKM.
+                </p>
+
             </div>
 
-            <!-- CARD 2: TOTAL MODAL TERJUAL -->
-            <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Modal Terjual</span>
-                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-rose-500/10 text-rose-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-rose-500/20">
-                        📉
-                    </span>
+            <!-- RIGHT (5 COLS): TECHNICAL BLUEPRINT ISOMETRIC DRAWING (FIG_001) -->
+            <div class="lg:col-span-5 bg-[#ffffff] border border-[#e1e1e1] rounded-[4px] p-5 relative overflow-hidden space-y-3">
+                
+                <div class="flex items-center justify-between font-mono text-[10px] text-[#7d7d7d] border-b border-[#e1e1e1] pb-2">
+                    <span class="font-bold text-[#103dff]">FIG_001 // SCHEMATIC</span>
+                    <span>HARDWARE &amp; LEDGER ARCHITECTURE</span>
                 </div>
-                <div class="mt-2 sm:mt-3">
-                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-slate-200 tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.total_beli_terjual).replace(',', '.') }}">
-                        Rp {{ "{:,.0f}".format(stats.total_beli_terjual).replace(',', '.') }}
-                    </div>
-                    <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium truncate">
-                        HPP unit yang laku
-                    </div>
-                </div>
-            </div>
 
-            <!-- CARD 3: TOTAL KEUNTUNGAN BERSIH (CUAN) -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/30 rounded-2xl p-3 sm:p-5 relative overflow-hidden glow-emerald">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] sm:text-xs font-extrabold text-emerald-400 uppercase tracking-wider">Cuan Bersih</span>
-                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs sm:text-sm font-bold border border-emerald-500/30">
-                        💰
-                    </span>
+                <!-- SVG Technical Drawing of Smartphone & Flow -->
+                <div class="w-full flex items-center justify-center py-2 bg-[#f4f5f9] border border-[#e1e1e1]">
+                    <svg viewBox="0 0 320 160" class="w-full max-w-[280px] h-auto text-[#0043ff]" fill="none" stroke="currentColor" stroke-width="1.2">
+                        <!-- Grid Lines -->
+                        <path d="M20 20 H300 M20 50 H300 M20 80 H300 M20 110 H300 M20 140 H300" stroke="#e1e1e1" stroke-width="0.75" stroke-dasharray="2 2" />
+                        <path d="M60 10 V150 M120 10 V150 M180 10 V150 M240 10 V150" stroke="#e1e1e1" stroke-width="0.75" stroke-dasharray="2 2" />
+                        
+                        <!-- Isometric Outer Chassis -->
+                        <polygon points="110,25 210,25 240,115 140,115" fill="#fbfbfb" stroke="#0043ff" stroke-width="1.5" />
+                        <polygon points="140,115 240,115 240,123 140,123" fill="#e6ebff" stroke="#0043ff" stroke-width="1.5" />
+                        <polygon points="110,25 110,33 140,123 140,115" fill="#97acff" stroke="#0043ff" stroke-width="1.5" />
+                        
+                        <!-- Screen Plane -->
+                        <polygon points="120,35 200,35 228,105 148,105" fill="#f4f5f9" stroke="#0043ff" stroke-width="1" />
+                        <circle cx="174" cy="42" r="3" fill="#103dff" />
+                        
+                        <!-- Callout Leader Lines -->
+                        <line x1="200" y1="50" x2="270" y2="40" stroke="#103dff" stroke-width="1" stroke-dasharray="2 2" />
+                        <circle cx="270" cy="40" r="2" fill="#103dff" />
+                        <text x="275" y="43" fill="#103dff" font-size="8" font-family="'JetBrains Mono', monospace">QC PASSED</text>
+                        
+                        <line x1="130" y1="110" x2="60" y2="120" stroke="#103dff" stroke-width="1" stroke-dasharray="2 2" />
+                        <circle cx="60" cy="120" r="2" fill="#103dff" />
+                        <text x="15" y="123" fill="#103dff" font-size="8" font-family="'JetBrains Mono', monospace">HPP RECORD</text>
+                    </svg>
                 </div>
-                <div class="mt-2 sm:mt-3">
-                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-emerald-400 tracking-tight truncate" title="+Rp {{ "{:,.0f}".format(stats.total_untung).replace(',', '.') }}">
-                        +Rp {{ "{:,.0f}".format(stats.total_untung).replace(',', '.') }}
-                    </div>
-                    <div class="text-[10px] sm:text-[11px] text-emerald-400/80 mt-0.5 font-bold flex items-center gap-1">
-                        <span>Margin: {{ "{:.1f}%".format(stats.avg_margin * 100) }}</span>
-                    </div>
-                </div>
-            </div>
 
-            <!-- CARD 4: STOK READY & MODAL TERTAHAN -->
-            <div class="bg-slate-900/90 border border-amber-500/30 rounded-2xl p-3 sm:p-5 relative overflow-hidden group">
-                <div class="flex items-center justify-between">
-                    <span class="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">Stok Ready</span>
-                    <span class="w-6 h-6 sm:w-8 sm:h-8 rounded-lg sm:rounded-xl bg-amber-500/10 text-amber-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-amber-500/20">
-                        📦
-                    </span>
+                <div class="font-mono text-[10px] text-[#7d7d7d] flex items-center justify-between">
+                    <span>STATUS: 155 UNITS PROCESSED</span>
+                    <span class="text-[#103dff] font-bold">NET PROFIT: +72.7M</span>
                 </div>
-                <div class="mt-2 sm:mt-3">
-                    <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-amber-300 tracking-tight truncate" title="Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }}">
-                        Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }}
-                    </div>
-                    <div class="text-[10px] sm:text-[11px] text-amber-400/90 mt-0.5 font-bold truncate">
-                        {{ stats.ready_count }} unit siap jual
-                    </div>
-                </div>
+
             </div>
 
         </div>
 
-        <!-- SECTION 2: TOP APP TABS SWITCHER -->
-        <nav class="flex items-center p-1 bg-slate-900 border border-slate-800 rounded-2xl gap-1 overflow-x-auto no-scrollbar">
-            <button onclick="switchTab('ready')" id="tab-btn-ready" class="main-tab-btn active shrink-0 sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer">
-                <span>📦 Stok Ready</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-950/40 font-mono">{{ ready_stocks|length }}</span>
-            </button>
-            <button onclick="switchTab('penjualan')" id="tab-btn-penjualan" class="main-tab-btn shrink-0 sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
-                <span>🛒 Penjualan</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[10px] bg-slate-800 font-mono">{{ recent_sales|length }}</span>
-            </button>
-            <button onclick="switchTab('laba-bulanan')" id="tab-btn-laba-bulanan" class="main-tab-btn shrink-0 sm:flex-1 py-2.5 px-3 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
-                <span>📅 Laba Bulanan</span>
-                <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30 font-mono">{{ monthly_profits|length }} Bln</span>
-            </button>
-            <button onclick="switchTab('stats')" id="tab-btn-stats" class="main-tab-btn shrink-0 py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1 cursor-pointer">
-                <span>📊 Grafik</span>
-            </button>
-            <button onclick="switchTab('pajak')" id="tab-btn-pajak" class="main-tab-btn shrink-0 py-2.5 px-3.5 rounded-xl text-xs font-bold text-slate-400 hover:text-white transition flex items-center justify-center gap-1.5 cursor-pointer">
-                <span>⚖️ Pajak UMKM</span>
-                {% if tax_info.tax_amount == 0 %}
-                <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30">Nihil</span>
-                {% else %}
-                <span class="px-1.5 py-0.2 rounded-full text-[9px] bg-amber-500/20 text-amber-300 font-mono font-bold border border-amber-500/30">0.5%</span>
-                {% endif %}
-            </button>
-        </nav>
-
-        <!-- TAB CONTENT 1: STOK READY (DEFAULT AKTIF AGAR FOKUS DI UNIT JUALAN) -->
-        <div id="tab-content-ready" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-            <!-- Header -->
-            <div class="p-3.5 sm:p-5 border-b border-slate-800 flex items-center justify-between">
-                <div>
-                    <h3 class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
-                        <span>Unit Stok Ready (Belum Laku)</span>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
-                            {{ ready_stocks|length }} Unit
-                        </span>
-                    </h3>
-                    <p class="text-[11px] text-slate-400 mt-0.5">Klik "Jual" saat ada pembeli deal untuk catat keuntungan.</p>
+        <!-- SECTION 2: RULED SECTION HEADER & TECHNICAL CHAPTER TABS -->
+        <div class="space-y-4 pt-2">
+            
+            <!-- Ruled Section Header with Line filling row -->
+            <div class="flex items-center justify-between gap-4 border-b border-[#000000] pb-2">
+                <div class="flex items-center gap-2">
+                    <span class="font-serif text-lg font-bold text-[#000000]">DAFTAR INVENTARIS &amp; BUKU TRANSAKSI.</span>
+                </div>
+                <div class="font-mono text-[11px] text-[#7d7d7d] uppercase hidden sm:block">
+                    SELECT CHAPTER //
                 </div>
             </div>
 
-            <!-- MOBILE CARD VIEW FOR READY STOCK (RESPONSIVE FOR SMARTPHONES) -->
-            <div class="sm:hidden divide-y divide-slate-800/80">
-                {% if ready_stocks %}
-                    {% for r in ready_stocks %}
-                    <div class="p-3.5 space-y-2.5 bg-slate-900/40">
-                        <div class="flex items-start justify-between gap-2">
-                            <div>
-                                <div class="flex items-center gap-1.5">
-                                    <span class="text-[9px] font-mono font-bold bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded uppercase">{{ r.merk }}</span>
-                                    <span class="text-[10px] font-mono text-slate-500">#{{ r.id }}</span>
-                                    <span class="text-[10px] text-slate-400">{{ r.tanggal_beli or r.tanggal }}</span>
-                                </div>
-                                <h4 class="font-extrabold text-sm text-white mt-1">{{ r.nama_produk }}</h4>
-                            </div>
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 shrink-0">
-                                READY
-                            </span>
-                        </div>
+            <!-- Blueprint Navigation Tabs -->
+            <nav class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+                <button onclick="switchTab('ready')" id="tab-btn-ready" class="main-tab-btn active">
+                    <span>[ 01: STOK READY ]</span>
+                    <span class="font-mono font-bold text-[#103dff]">({{ ready_stocks|length }})</span>
+                </button>
+                <button onclick="switchTab('penjualan')" id="tab-btn-penjualan" class="main-tab-btn">
+                    <span>[ 02: BUKU PENJUALAN ]</span>
+                    <span class="font-mono">({{ recent_sales|length }})</span>
+                </button>
+                <button onclick="switchTab('laba-bulanan')" id="tab-btn-laba-bulanan" class="main-tab-btn">
+                    <span>[ 03: LABA BULANAN ]</span>
+                    <span class="font-mono text-[#103dff]">({{ monthly_profits|length }} BLN)</span>
+                </button>
+                <button onclick="switchTab('stats')" id="tab-btn-stats" class="main-tab-btn">
+                    <span>[ 04: GRAFIK &amp; TREN ]</span>
+                </button>
+                <button onclick="switchTab('pajak')" id="tab-btn-pajak" class="main-tab-btn">
+                    <span>[ 05: PAJAK UMKM ]</span>
+                    <span class="text-[9px] font-mono font-bold uppercase text-[#103dff]">
+                        {% if tax_info.tax_amount == 0 %}NIHIL{% else %}0.5%{% endif %}
+                    </span>
+                </button>
+            </nav>
 
-                        <div class="flex items-center justify-between text-xs pt-1.5 border-t border-slate-800/60 font-mono">
-                            <div>
-                                <span class="text-[10px] text-slate-500 font-sans block">Modal Beli</span>
-                                <span class="font-bold text-amber-300 text-sm">
-                                    Rp {{ "{:,.0f}".format(r.harga_beli).replace(',', '.') }}
-                                </span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] text-slate-500 font-sans block">Metode Beli</span>
-                                <span class="text-[10px] font-bold text-slate-300 bg-slate-800 px-2 py-0.5 rounded">{{ r.pembayaran }}</span>
-                            </div>
-                        </div>
+        </div>
 
-                        <div class="flex items-center gap-2 pt-1">
-                            <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="flex-1 py-2 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl text-xs transition shadow-sm flex items-center justify-center gap-1">
-                                <span>🤝</span>
-                                <span>Jual Unit Ini</span>
-                            </button>
-                            <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="px-3 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 rounded-xl text-xs font-bold border border-slate-700 active:scale-95">
-                                ✏️
-                            </button>
-                            <button onclick="deleteRow({{ r.id }})" class="px-3 py-2 bg-slate-800 hover:bg-rose-500/20 text-rose-400 rounded-xl text-xs font-bold border border-slate-700 active:scale-95">
-                                🗑️
-                            </button>
-                        </div>
-                    </div>
-                    {% endfor %}
-                {% else %}
-                    <div class="py-10 px-4 text-center text-slate-500 text-xs italic">
-                        Belum ada unit di stok ready. Klik <b>+ Stok Baru</b> di atas untuk mencatat HP baru!
-                    </div>
-                {% endif %}
+        <!-- ==================================================================== -->
+        <!-- TAB CONTENT 1: STOK READY (UNIT TERSEDIA)                           -->
+        <!-- ==================================================================== -->
+        <div id="tab-content-ready" class="space-y-4">
+            
+            <div class="flex items-center justify-between border-b border-[#e1e1e1] pb-2 text-xs">
+                <div>
+                    <span class="font-mono text-[11px] text-[#7d7d7d]">CHAPTER 01 //</span>
+                    <span class="font-serif font-bold text-sm text-[#000000]">Unit Smartphone Tersedia di Gudang (Ready Stock)</span>
+                </div>
+                <span class="font-mono text-[11px] text-[#7d7d7d]">
+                    TOTAL MODAL: <b class="text-[#000000]">Rp {{ "{:,.0f}".format(stats.modal_tertahan).replace(',', '.') }}</b>
+                </span>
             </div>
 
-            <!-- DESKTOP TABLE VIEW FOR READY STOCK (VISIBLE ON TABLETS & PC) -->
-            <div class="hidden sm:block overflow-x-auto no-scrollbar">
-                <table class="w-full text-left border-collapse text-xs">
-                    <thead>
-                        <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                            <th class="py-3 px-4">#ID</th>
-                            <th class="py-3 px-4">Tanggal Masuk</th>
-                            <th class="py-3 px-4">Merk &amp; Tipe Unit</th>
-                            <th class="py-3 px-4 text-right">Modal Kulakan</th>
-                            <th class="py-3 px-4">Metode Beli</th>
-                            <th class="py-3 px-4 text-center">Status</th>
-                            <th class="py-3 px-4 text-center">Aksi</th>
+            <!-- Desktop Technical Table -->
+            <div class="hidden sm:block overflow-x-auto border border-[#000000] bg-[#ffffff] rounded-[4px]">
+                <table class="w-full text-left text-xs border-collapse">
+                    <thead class="bg-[#f4f5f9] text-[#7d7d7d] font-mono uppercase text-[10px] border-b border-[#000000]">
+                        <tr>
+                            <th class="py-2.5 px-3">ID</th>
+                            <th class="py-2.5 px-3">Tgl Masuk</th>
+                            <th class="py-2.5 px-3">Merk &amp; Seri Perangkat</th>
+                            <th class="py-2.5 px-3 text-right">Modal Beli (HPP)</th>
+                            <th class="py-2.5 px-3 text-center">Metode Beli</th>
+                            <th class="py-2.5 px-3 text-center">Status</th>
+                            <th class="py-2.5 px-3 text-center action-col">Aksi Unit</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800/60">
+                    <tbody class="divide-y divide-[#e1e1e1]">
                         {% if ready_stocks %}
                             {% for r in ready_stocks %}
-                            <tr class="hover:bg-slate-800/40 transition">
-                                <td class="py-3.5 px-4 font-mono text-slate-400 font-bold">#{{ r.id }}</td>
-                                <td class="py-3.5 px-4 text-slate-400">{{ r.tanggal_beli or r.tanggal }}</td>
-                                <td class="py-3.5 px-4">
-                                    <div class="font-bold text-white flex items-center gap-1.5">
-                                        <span class="text-xs bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-300 uppercase">{{ r.merk }}</span>
-                                        <span>{{ r.nama_produk }}</span>
-                                    </div>
+                            <tr class="hover:bg-[#e6ebff]/40 transition font-mono">
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">#{{ r.id }}</td>
+                                <td class="py-2.5 px-3 text-[#000000]">{{ r.tanggal_beli or r.tanggal }}</td>
+                                <td class="py-2.5 px-3 font-serif font-bold text-sm text-[#000000]">
+                                    <span class="font-mono text-[10px] text-[#7d7d7d] uppercase mr-1">[{{ r.merk }}]</span>
+                                    {{ r.nama_produk }}
                                 </td>
-                                <td class="py-3.5 px-4 text-right font-mono font-bold text-amber-300">
+                                <td class="py-2.5 px-3 text-right font-bold text-[#000000]">
                                     Rp {{ "{:,.0f}".format(r.harga_beli).replace(',', '.') }}
                                 </td>
-                                <td class="py-3.5 px-4 text-slate-400">{{ r.pembayaran }}</td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                <td class="py-2.5 px-3 text-center text-[11px] text-[#7d7d7d]">{{ r.pembayaran }}</td>
+                                <td class="py-2.5 px-3 text-center">
+                                    <span class="px-2 py-0.5 rounded-[4px] text-[10px] font-bold border border-[#7d7d7d] bg-[#f4f5f9] text-[#000000]">
                                         READY
                                     </span>
                                 </td>
-                                <td class="py-3.5 px-4 text-center">
+                                <td class="py-2.5 px-3 text-center action-col">
                                     <div class="flex items-center justify-center gap-1.5">
-                                        <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="px-2.5 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold rounded-lg text-xs transition shadow-sm cursor-pointer active:scale-95">
-                                            🤝 Jual
+                                        <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="key-btn key-btn-primary">
+                                            <span>Jual Unit</span>
                                         </button>
-                                        <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="p-1.5 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white rounded-lg text-xs transition border border-slate-700 cursor-pointer" title="Edit Data Stok">
-                                            ✏️
+                                        <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="key-btn" title="Edit Data Stok">
+                                            <span>Edit</span>
                                         </button>
-                                        <button onclick="deleteRow({{ r.id }})" class="p-1.5 bg-slate-800 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 rounded-lg text-xs transition border border-slate-700 cursor-pointer" title="Hapus Stok">
-                                            🗑️
+                                        <button onclick="deleteRow({{ r.id }})" class="key-btn key-btn-danger" title="Hapus Stok">
+                                            <span>Hapus</span>
                                         </button>
                                     </div>
                                 </td>
@@ -324,139 +443,130 @@
                             {% endfor %}
                         {% else %}
                             <tr>
-                                <td colspan="7" class="py-8 text-center text-slate-500 italic">
-                                    Belum ada unit di stok ready. Silakan klik <b>+ Stok Baru</b> untuk mencatat HP baru!
+                                <td colspan="7" class="py-8 text-center font-serif italic text-[#7d7d7d]">
+                                    Seluruh inventaris telah terjual. Gunakan tombol [ + Input Stok Baru ] di atas untuk mencatat kulakan baru.
                                 </td>
                             </tr>
                         {% endif %}
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <!-- TAB CONTENT 2: BUKU PENJUALAN (SUDAH LAKU) -->
-        <div id="tab-content-penjualan" class="hidden bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm">
-            <!-- Header Controls -->
-            <div class="p-3.5 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div class="flex items-center justify-between">
-                    <h3 class="font-extrabold text-sm sm:text-base text-white">Buku Penjualan Terjual</h3>
-                    <span class="sm:hidden text-xs font-mono text-emerald-400 font-bold">{{ recent_sales|length }} Trx</span>
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2">
-                    <div class="relative flex-1 sm:w-60">
-                        <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400 text-xs">🔍</span>
-                        <input type="text" id="sales-search" placeholder="Cari nama HP..." class="w-full text-xs pl-8 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200 placeholder-slate-500 font-medium" oninput="filterSalesTable()">
+            <!-- Mobile Card View -->
+            <div class="sm:hidden divide-y divide-[#e1e1e1] border border-[#000000] bg-[#ffffff] rounded-[4px]">
+                {% for r in ready_stocks %}
+                <div class="p-3.5 space-y-2">
+                    <div class="flex items-start justify-between">
+                        <div>
+                            <div class="font-mono text-[10px] text-[#7d7d7d]">
+                                #{{ r.id }} · {{ r.tanggal_beli or r.tanggal }} · [{{ r.merk }}]
+                            </div>
+                            <h4 class="font-serif font-bold text-sm text-[#000000] mt-0.5">{{ r.nama_produk }}</h4>
+                        </div>
+                        <span class="px-2 py-0.5 rounded-[4px] text-[10px] font-mono border border-[#7d7d7d] bg-[#f4f5f9]">READY</span>
                     </div>
 
-                    <select id="sales-month-filter" onchange="filterSalesTable()" class="text-xs px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200">
+                    <div class="flex items-center justify-between font-mono text-xs pt-1 border-t border-[#e1e1e1]">
+                        <span>HPP: <b>Rp {{ "{:,.0f}".format(r.harga_beli).replace(',', '.') }}</b></span>
+                        <span>{{ r.pembayaran }}</span>
+                    </div>
+
+                    <div class="flex items-center gap-1.5 pt-1">
+                        <button onclick="openSellModal({{ r.id }}, '{{ r.nama_produk }}', {{ r.harga_beli }})" class="key-btn key-btn-primary flex-1">
+                            <span>Jual Unit</span>
+                        </button>
+                        <button onclick="openEditModal({{ r.id }}, '{{ r.merk }}', '{{ r.nama_produk }}', {{ r.harga_beli }}, '{{ r.pembayaran }}', '{{ r.tanggal_beli or r.tanggal }}')" class="key-btn">
+                            <span>Edit</span>
+                        </button>
+                        <button onclick="deleteRow({{ r.id }})" class="key-btn key-btn-danger">
+                            <span>Hapus</span>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <!-- ==================================================================== -->
+        <!-- TAB CONTENT 2: BUKU PENJUALAN (SUDAH LAKU)                           -->
+        <!-- ==================================================================== -->
+        <div id="tab-content-penjualan" class="hidden space-y-4">
+            
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e1e1e1] pb-3 text-xs">
+                <div>
+                    <span class="font-mono text-[11px] text-[#7d7d7d]">CHAPTER 02 //</span>
+                    <span class="font-serif font-bold text-sm text-[#000000]">Buku Transaksi Penjualan Terjual</span>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex flex-wrap items-center gap-2">
+                    <input type="text" id="sales-search" placeholder="Cari tipe HP..." class="px-3 py-1 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] font-mono text-xs text-[#000000] focus:outline-none focus:border-[#103dff]" oninput="filterSalesTable()">
+                    
+                    <select id="sales-month-filter" onchange="filterSalesTable()" class="px-2 py-1 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] font-mono text-xs text-[#000000] focus:outline-none focus:border-[#103dff]">
                         <option value="ALL">Semua Bulan</option>
                         {% for m in monthly_profits %}
                         <option value="{{ m.month }}">{{ m.month_label }} ({{ m.total_unit }})</option>
                         {% endfor %}
                     </select>
 
-                    <select id="sales-pay-filter" onchange="filterSalesTable()" class="text-xs px-2.5 py-2 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200">
+                    <select id="sales-pay-filter" onchange="filterSalesTable()" class="px-2 py-1 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] font-mono text-xs text-[#000000] focus:outline-none focus:border-[#103dff]">
                         <option value="ALL">Semua Bayar</option>
                         {% for pm in payment_stats %}
                         <option value="{{ pm.pembayaran }}">{{ pm.pembayaran }} ({{ pm.count }})</option>
                         {% endfor %}
                     </select>
 
-                    <div class="flex items-center gap-1.5 w-full sm:w-auto">
-                        <a href="/export/csv" class="flex-1 sm:flex-none justify-center px-3 py-2 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-xl text-xs font-bold transition flex items-center gap-1.5">
-                            <span>📥</span>
-                            <span>Excel</span>
-                        </a>
-
-                        <button onclick="printReport()" class="flex-1 sm:flex-none justify-center px-3 py-2 bg-slate-800 hover:bg-slate-700 text-blue-400 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer">
-                            <span>🖨️</span>
-                            <span>PDF</span>
-                        </button>
-                    </div>
+                    <button onclick="printReport()" class="key-btn">
+                        <span>Cetak PDF</span>
+                    </button>
                 </div>
             </div>
 
-            <!-- MOBILE CARD VIEW FOR PENJUALAN -->
-            <div class="sm:hidden divide-y divide-slate-800/80" id="sales-mobile-tbody">
-                {% for s in recent_sales %}
-                <div class="p-3.5 space-y-2 sale-row-mobile {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}" data-month="{{ (s.tanggal_jual or s.tanggal)[:7] }}">
-                    <div class="flex items-start justify-between gap-2">
-                        <div>
-                            <div class="flex items-center gap-1.5">
-                                <span class="text-[9px] font-mono font-bold bg-slate-800 text-slate-400 px-1.5 py-0.5 rounded">{{ s.merk }}</span>
-                                <span class="text-[10px] font-mono text-slate-500">#{{ s.id }}</span>
-                                <span class="text-[10px] text-slate-400">{{ s.tanggal_jual or s.tanggal }}</span>
-                            </div>
-                            <h4 class="font-bold text-xs text-white mt-1">{{ s.nama_produk }}</h4>
-                        </div>
-                        <div class="text-right shrink-0">
-                            <span class="font-mono font-extrabold text-emerald-400 text-xs block">+Rp {{ "{:,.0f}".format(s.keuntungan).replace(',', '.') }}</span>
-                            <span class="text-[9px] font-mono text-emerald-400 font-bold bg-emerald-500/10 px-1.5 py-0.2 rounded border border-emerald-500/20">{{ "{:.1f}%".format(s.margin * 100) }}</span>
-                        </div>
-                    </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-400 pt-1.5 border-t border-slate-800/60 font-mono">
-                        <span>Beli: Rp {{ "{:,.0f}".format(s.harga_beli).replace(',', '.') }}</span>
-                        <span>➔</span>
-                        <span class="text-white font-bold">Jual: Rp {{ "{:,.0f}".format(s.harga_jual).replace(',', '.') }}</span>
-                        <span class="text-[10px] text-slate-300 font-sans font-bold bg-slate-800 px-1.5 py-0.5 rounded">{{ s.pembayaran }}</span>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-
-            <!-- DESKTOP TABLE VIEW FOR PENJUALAN -->
-            <div class="hidden sm:block overflow-x-auto no-scrollbar">
-                <table class="w-full text-left border-collapse text-xs" id="sales-table">
-                    <thead>
-                        <tr class="bg-slate-950/80 border-b border-slate-800 text-slate-400 font-bold uppercase tracking-wider text-[10px]">
-                            <th class="py-3 px-4">#</th>
-                            <th class="py-3 px-4">Tanggal Jual</th>
-                            <th class="py-3 px-4">Merk / Produk</th>
-                            <th class="py-3 px-4 text-center">Qty</th>
-                            <th class="py-3 px-4 text-right">Harga Beli</th>
-                            <th class="py-3 px-4 text-right">Harga Jual</th>
-                            <th class="py-3 px-4 text-right">Cuan Bersih</th>
-                            <th class="py-3 px-4 text-center">Margin</th>
-                            <th class="py-3 px-4">Pembayaran</th>
-                            <th class="py-3 px-4 text-center action-col">Aksi</th>
+            <!-- Desktop Technical Table -->
+            <div class="hidden sm:block overflow-x-auto border border-[#000000] bg-[#ffffff] rounded-[4px]">
+                <table class="w-full text-left text-xs border-collapse" id="sales-table">
+                    <thead class="bg-[#f4f5f9] text-[#7d7d7d] font-mono uppercase text-[10px] border-b border-[#000000]">
+                        <tr>
+                            <th class="py-2.5 px-3">ID</th>
+                            <th class="py-2.5 px-3">Tanggal</th>
+                            <th class="py-2.5 px-3">Perangkat / Seri</th>
+                            <th class="py-2.5 px-3 text-center">Qty</th>
+                            <th class="py-2.5 px-3 text-right">Modal Beli</th>
+                            <th class="py-2.5 px-3 text-right">Harga Jual</th>
+                            <th class="py-2.5 px-3 text-right text-[#103dff] font-bold">Laba Bersih</th>
+                            <th class="py-2.5 px-3 text-center">Margin</th>
+                            <th class="py-2.5 px-3 text-center">Metode</th>
+                            <th class="py-2.5 px-3 text-center action-col">Aksi</th>
                         </tr>
                     </thead>
-                    <tbody class="divide-y divide-slate-800/60" id="sales-tbody">
+                    <tbody class="divide-y divide-[#e1e1e1]" id="sales-tbody">
                         {% for s in recent_sales %}
-                        <tr class="hover:bg-slate-800/40 transition sale-row {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}" data-month="{{ (s.tanggal_jual or s.tanggal)[:7] }}">
-                            <td class="py-3.5 px-4 font-mono text-slate-500 text-[11px]">{{ s.id }}</td>
-                            <td class="py-3.5 px-4 text-slate-400 whitespace-nowrap">{{ s.tanggal_jual or s.tanggal }}</td>
-                            <td class="py-3.5 px-4">
-                                <div class="font-bold text-slate-100 flex items-center gap-1.5">
-                                    <span class="text-slate-400 text-[10px] font-mono uppercase bg-slate-800 px-1.5 py-0.5 rounded">{{ s.merk }}</span>
-                                    <span>{{ s.nama_produk }}</span>
-                                </div>
+                        <tr class="hover:bg-[#e6ebff]/40 transition font-mono sale-row {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}" data-month="{{ (s.tanggal_jual or s.tanggal)[:7] }}">
+                            <td class="py-2 px-3 text-[#7d7d7d]">#{{ s.id }}</td>
+                            <td class="py-2 px-3 text-[#000000] whitespace-nowrap">{{ s.tanggal_jual or s.tanggal }}</td>
+                            <td class="py-2 px-3 font-serif font-bold text-sm text-[#000000]">
+                                <span class="font-mono text-[10px] text-[#7d7d7d] uppercase mr-1">[{{ s.merk }}]</span>
+                                {{ s.nama_produk }}
                             </td>
-                            <td class="py-3.5 px-4 text-center font-mono text-slate-300">{{ s.qty }}</td>
-                            <td class="py-3.5 px-4 text-right font-mono text-slate-300">
+                            <td class="py-2 px-3 text-center text-[#7d7d7d]">{{ s.qty }}</td>
+                            <td class="py-2 px-3 text-right text-[#7d7d7d]">
                                 Rp {{ "{:,.0f}".format(s.harga_beli).replace(',', '.') }}
                             </td>
-                            <td class="py-3.5 px-4 text-right font-mono text-white font-semibold">
+                            <td class="py-2 px-3 text-right font-bold text-[#000000]">
                                 Rp {{ "{:,.0f}".format(s.harga_jual).replace(',', '.') }}
                             </td>
-                            <td class="py-3.5 px-4 text-right font-mono font-extrabold text-emerald-400">
+                            <td class="py-2 px-3 text-right font-bold text-[#103dff]">
                                 +Rp {{ "{:,.0f}".format(s.keuntungan).replace(',', '.') }}
                             </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                    {{ "{:.2f}%".format(s.margin * 100) }}
-                                </span>
+                            <td class="py-2 px-3 text-center text-[#7d7d7d]">
+                                {{ "{:.1f}%".format(s.margin * 100) }}
                             </td>
-                            <td class="py-3.5 px-4 whitespace-nowrap">
-                                <span class="px-2 py-0.5 rounded-lg text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-700">
-                                    {{ s.pembayaran }}
-                                </span>
+                            <td class="py-2 px-3 text-center text-[10px] text-[#7d7d7d]">
+                                {{ s.pembayaran }}
                             </td>
-                            <td class="py-3.5 px-4 text-center action-col">
-                                <button onclick="deleteRow({{ s.id }})" class="p-1 hover:text-rose-400 text-slate-500 transition" title="Hapus Data">
-                                    🗑️
-                                </button>
+                            <td class="py-2 px-3 text-center action-col">
+                                <button onclick="deleteRow({{ s.id }})" class="text-[#7d7d7d] hover:text-[#e11d48] text-xs font-mono" title="Hapus">[Hapus]</button>
                             </td>
                         </tr>
                         {% endfor %}
@@ -464,266 +574,163 @@
                 </table>
             </div>
 
-            <!-- Footer Pagination & Toggle Controls -->
-            <div class="p-3.5 sm:p-4 border-t border-slate-800/80 bg-slate-950/40 flex flex-col sm:flex-row items-center justify-between gap-3 action-col">
-                <span class="text-xs text-slate-400 text-center sm:text-left">
-                    Menampilkan <b class="text-white" id="current-visible-count">10</b> dari <b class="text-white">{{ recent_sales|length }}</b> transaksi terbaru
-                </span>
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleAllRows()" id="btn-toggle-all" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer">
-                        <span>📜</span>
-                        <span id="toggle-all-text">Tampilkan Semua ({{ recent_sales|length }})</span>
-                    </button>
+            <!-- Mobile Card View for Sales -->
+            <div class="sm:hidden divide-y divide-[#e1e1e1] border border-[#000000] bg-[#ffffff] rounded-[4px]" id="sales-mobile-tbody">
+                {% for s in recent_sales %}
+                <div class="p-3.5 space-y-1.5 sale-row-mobile {% if loop.index > 10 %}extra-row hidden{% endif %}" data-product="{{ s.nama_produk|lower }}" data-payment="{{ s.pembayaran }}" data-month="{{ (s.tanggal_jual or s.tanggal)[:7] }}">
+                    <div class="flex items-start justify-between font-mono text-[10px] text-[#7d7d7d]">
+                        <span>#{{ s.id }} · {{ s.tanggal_jual or s.tanggal }} · [{{ s.merk }}]</span>
+                        <span>{{ s.pembayaran }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <h4 class="font-serif font-bold text-sm text-[#000000]">{{ s.nama_produk }}</h4>
+                        <span class="font-mono text-xs font-bold text-[#103dff]">+Rp {{ "{:,.0f}".format(s.keuntungan).replace(',', '.') }}</span>
+                    </div>
+                    <div class="flex items-center justify-between font-mono text-[11px] text-[#7d7d7d] pt-1 border-t border-[#e1e1e1]">
+                        <span>Beli: Rp {{ "{:,.0f}".format(s.harga_beli).replace(',', '.') }}</span>
+                        <span>Jual: Rp {{ "{:,.0f}".format(s.harga_jual).replace(',', '.') }} ({{ "{:.1f}%".format(s.margin * 100) }})</span>
+                    </div>
                 </div>
+                {% endfor %}
             </div>
+
+            <!-- Footer Pagination Toggle -->
+            <div class="p-3 border-t border-[#e1e1e1] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-[#7d7d7d]">
+                <span>Menampilkan <b class="text-[#000000]" id="current-visible-count">10</b> dari <b class="text-[#000000]">{{ recent_sales|length }}</b> transaksi</span>
+                <button onclick="toggleAllRows()" id="btn-toggle-all" class="key-btn">
+                    <span id="toggle-all-text">Tampilkan Semua ({{ recent_sales|length }})</span>
+                </button>
+            </div>
+
         </div>
 
-        <!-- TAB CONTENT: LABA BULANAN (FITUR HITUNG KEUNTUNGAN PER BULAN) -->
-        <div id="tab-content-laba-bulanan" class="hidden space-y-4">
+        <!-- ==================================================================== -->
+        <!-- TAB CONTENT 3: LABA BULANAN (FITUR HITUNG KEUNTUNGAN PER BULAN)     -->
+        <!-- ==================================================================== -->
+        <div id="tab-content-laba-bulanan" class="hidden space-y-8">
             
-            <!-- 1. Header & Quick Controls -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                    <div class="flex items-center gap-2">
-                        <span class="text-xl">📅</span>
-                        <h3 class="font-extrabold text-base sm:text-lg text-white">Laporan &amp; Hitung Keuntungan Bulanan</h3>
-                        <span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
-                            {{ monthly_summary.total_months }} Periode
-                        </span>
-                    </div>
-                    <p class="text-xs text-slate-400 mt-1">Transparansi rekapitulasi keuntungan bersih (net profit), modal HPP, omset, dan margin perputaran unit smartphone per bulan.</p>
-                </div>
+            <div class="border-b border-[#e1e1e1] pb-3">
+                <span class="font-mono text-[11px] text-[#7d7d7d]">CHAPTER 03 //</span>
+                <h3 class="font-serif font-bold text-base text-[#000000]">Rekapitulasi Keuntungan Bersih per Periode Bulanan</h3>
+                <p class="font-serif text-xs text-[#7d7d7d] mt-0.5">Analisis periodik perputaran modal HPP, volume unit terjual, dan akumulasi net profit riil.</p>
+            </div>
 
-                <div class="flex items-center gap-2">
-                    <button onclick="window.print()" class="px-3.5 py-2 bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-slate-700 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer active:scale-95">
-                        <span>🖨️</span>
-                        <span>Cetak Laporan</span>
-                    </button>
+            <!-- 4 Blueprint KPI Summary Cards -->
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="border border-[#000000] bg-[#ffffff] p-4 rounded-[4px]">
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase">TOTAL NET PROFIT</div>
+                    <div class="font-mono text-base sm:text-lg font-bold text-[#103dff] mt-1">
+                        +Rp {{ "{:,.0f}".format(monthly_summary.total_profit_all).replace(',', '.') }}
+                    </div>
+                    <div class="font-mono text-[10px] text-[#7d7d7d] mt-0.5">Akumulasi {{ monthly_summary.total_months }} Periode</div>
+                </div>
+                <div class="border border-[#e1e1e1] bg-[#ffffff] p-4 rounded-[4px]">
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase">RATA-RATA CUAN / BLN</div>
+                    <div class="font-mono text-base sm:text-lg font-bold text-[#000000] mt-1">
+                        +Rp {{ "{:,.0f}".format(monthly_summary.avg_monthly_profit).replace(',', '.') }}
+                    </div>
+                    <div class="font-mono text-[10px] text-[#7d7d7d] mt-0.5">Laba bersih perputaran</div>
+                </div>
+                <div class="border border-[#e1e1e1] bg-[#ffffff] p-4 rounded-[4px]">
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase">BULAN REKOR TERBESAR</div>
+                    <div class="font-mono text-base sm:text-lg font-bold text-[#103dff] mt-1">
+                        +Rp {{ "{:,.0f}".format(monthly_summary.best_month.total_profit).replace(',', '.') }}
+                    </div>
+                    <div class="font-mono text-[10px] text-[#7d7d7d] mt-0.5">{{ monthly_summary.best_month.month_label }}</div>
+                </div>
+                <div class="border border-[#e1e1e1] bg-[#ffffff] p-4 rounded-[4px]">
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase">TOTAL UNIT LAKU</div>
+                    <div class="font-mono text-base sm:text-lg font-bold text-[#000000] mt-1">
+                        {{ stats.total_units_sold }} Unit
+                    </div>
+                    <div class="font-mono text-[10px] text-[#7d7d7d] mt-0.5">Omset: Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}</div>
                 </div>
             </div>
 
-            <!-- 2. 4 Executive Summary KPI Cards -->
-            <div class="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
-                <!-- Total Keuntungan Semua Bulan -->
-                <div class="bg-slate-900/90 border border-emerald-500/30 rounded-2xl p-3.5 sm:p-5 relative overflow-hidden group glow-emerald">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] sm:text-xs font-bold text-emerald-400 uppercase tracking-wider">Total Laba Bersih</span>
-                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-emerald-500/20 text-emerald-300 flex items-center justify-center text-xs sm:text-sm font-bold border border-emerald-500/30">
-                            💰
-                        </span>
-                    </div>
-                    <div class="mt-2.5">
-                        <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-emerald-300 tracking-tight truncate">
-                            +Rp {{ "{:,.0f}".format(monthly_summary.total_profit_all).replace(',', '.') }}
-                        </div>
-                        <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium">
-                            Akumulasi {{ monthly_summary.total_months }} bulan operasional
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rata-rata Cuan Bulanan -->
-                <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 sm:p-5 relative overflow-hidden group">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Rata-rata Laba / Bln</span>
-                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-teal-500/10 text-teal-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-teal-500/20">
-                            📊
-                        </span>
-                    </div>
-                    <div class="mt-2.5">
-                        <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-white tracking-tight truncate">
-                            +Rp {{ "{:,.0f}".format(monthly_summary.avg_monthly_profit).replace(',', '.') }}
-                        </div>
-                        <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium">
-                            Profit konsisten per bulan
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Rekor Bulan Tertinggi -->
-                <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 sm:p-5 relative overflow-hidden group">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] sm:text-xs font-bold text-amber-400 uppercase tracking-wider">Bulan Rekor Paling Cuan</span>
-                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-amber-500/10 text-amber-300 flex items-center justify-center text-xs sm:text-sm font-bold border border-amber-500/20">
-                            🏆
-                        </span>
-                    </div>
-                    <div class="mt-2.5">
-                        <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-amber-300 tracking-tight truncate">
-                            +Rp {{ "{:,.0f}".format(monthly_summary.best_month.total_profit).replace(',', '.') }}
-                        </div>
-                        <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium truncate">
-                            {{ monthly_summary.best_month.month_label }} ({{ monthly_summary.best_month.total_unit }} Unit)
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Total Unit Terjual -->
-                <div class="bg-slate-900/90 border border-slate-800/90 rounded-2xl p-3.5 sm:p-5 relative overflow-hidden group">
-                    <div class="flex items-center justify-between">
-                        <span class="text-[10px] sm:text-xs font-bold text-slate-400 uppercase tracking-wider">Total Unit Terjual</span>
-                        <span class="w-7 h-7 sm:w-8 sm:h-8 rounded-xl bg-blue-500/10 text-blue-400 flex items-center justify-center text-xs sm:text-sm font-bold border border-blue-500/20">
-                            📱
-                        </span>
-                    </div>
-                    <div class="mt-2.5">
-                        <div class="text-xs sm:text-lg lg:text-xl font-extrabold font-mono text-white tracking-tight truncate">
-                            {{ stats.total_units_sold }} Unit HP
-                        </div>
-                        <div class="text-[10px] sm:text-[11px] text-slate-400 mt-0.5 font-medium">
-                            Omset: Rp {{ "{:,.0f}".format(stats.total_omset).replace(',', '.') }}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 3. Kalkulator Interaktif Target Keuntungan Bulanan -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-emerald-950/40 border border-emerald-500/20 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-800 pb-3">
+            <!-- Interactive Target Simulator -->
+            <div class="border border-[#103dff] bg-[#e6ebff]/30 p-5 rounded-[4px] space-y-4">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#103dff]/30 pb-3">
                     <div>
-                        <h4 class="font-bold text-sm text-white flex items-center gap-2">
-                            <span>🎯 Kalkulator Target Cuan Bulanan</span>
-                            <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 uppercase">Simulator</span>
-                        </h4>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Ketik target keuntungan bersih yang kamu inginkan, sistem akan menghitung berapa unit HP &amp; modal yang perlu disiapkan.</p>
+                        <h4 class="font-mono font-bold text-xs uppercase text-[#103dff]">SIMULATOR TARGET KEUNTUNGAN BULANAN //</h4>
+                        <p class="font-serif text-xs text-[#000000] mt-0.5">Tentukan ekspektasi keuntungan bersih, sistem menghitung unit dan modal HPP yang diperlukan.</p>
                     </div>
-                    <!-- Quick Presets -->
-                    <div class="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                        <span class="text-[10px] text-slate-400 font-medium shrink-0">Preset:</span>
-                        <button onclick="setCalcTarget(5000000)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] font-bold font-mono transition cursor-pointer">5 Jt</button>
-                        <button onclick="setCalcTarget(10000000)" class="px-2 py-1 bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 rounded-lg text-[10px] font-bold font-mono transition cursor-pointer">10 Jt</button>
-                        <button onclick="setCalcTarget(15000000)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] font-bold font-mono transition cursor-pointer">15 Jt</button>
-                        <button onclick="setCalcTarget(20000000)" class="px-2 py-1 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-[10px] font-bold font-mono transition cursor-pointer">20 Jt</button>
+                    <div class="flex items-center gap-1.5">
+                        <button onclick="setCalcTarget(5000000)" class="key-btn">5 Jt</button>
+                        <button onclick="setCalcTarget(10000000)" class="key-btn key-btn-primary">10 Jt</button>
+                        <button onclick="setCalcTarget(15000000)" class="key-btn">15 Jt</button>
+                        <button onclick="setCalcTarget(20000000)" class="key-btn">20 Jt</button>
                     </div>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-12 gap-3.5 items-center">
-                    <!-- Left: Target Input -->
-                    <div class="md:col-span-4 space-y-2">
-                        <label class="text-[11px] font-bold text-slate-300 block">Target Keuntungan Bersih (Rp):</label>
-                        <div class="relative">
-                            <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-500 font-mono text-xs">Rp</span>
-                            <input type="number" id="calc-target-input" value="10000000" step="500000" oninput="runMonthlyProfitCalc()" class="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-700 rounded-xl text-sm font-mono font-extrabold text-emerald-400 focus:outline-none focus:border-emerald-500">
-                        </div>
-                        <div class="flex items-center justify-between text-[10px] text-slate-400">
-                            <span>Estimasi Laba/Unit:</span>
-                            <span class="font-mono text-slate-200 font-bold" id="calc-avg-profit-label">Rp 469.000</span>
-                        </div>
+                <div class="grid grid-cols-1 md:grid-cols-12 gap-4 items-center">
+                    <div class="md:col-span-5 space-y-1.5">
+                        <label class="font-mono text-[10px] uppercase text-[#7d7d7d] block">TARGET LABA BERSIH (IDR):</label>
+                        <input type="number" id="calc-target-input" value="10000000" step="500000" oninput="runMonthlyProfitCalc()" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#103dff] rounded-[4px] font-mono text-sm font-bold text-[#103dff] focus:outline-none">
+                        <div class="font-mono text-[10px] text-[#7d7d7d]">Rata-rata Cuan Unit Saat Ini: <b id="calc-avg-profit-label" class="text-[#000000]">Rp 469.000</b></div>
                     </div>
-
-                    <!-- Right: Calculated Requirements Cards -->
-                    <div class="md:col-span-8 grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 text-center">
-                            <span class="text-[10px] text-slate-400 block font-medium">Target Unit HP</span>
-                            <div class="text-base sm:text-lg font-mono font-extrabold text-emerald-400 mt-1" id="calc-res-units">22 Unit</div>
-                            <span class="text-[9px] text-slate-500 block">harus terjual</span>
+                    <div class="md:col-span-7 grid grid-cols-2 sm:grid-cols-4 gap-2 text-center font-mono text-xs">
+                        <div class="border border-[#e1e1e1] bg-[#ffffff] p-2.5 rounded-[4px]">
+                            <span class="text-[9px] text-[#7d7d7d] block uppercase">Target Unit</span>
+                            <div class="font-bold text-sm text-[#103dff] mt-0.5" id="calc-res-units">22 Unit</div>
                         </div>
-                        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 text-center">
-                            <span class="text-[10px] text-slate-400 block font-medium">Modal Disiapkan</span>
-                            <div class="text-xs sm:text-sm font-mono font-extrabold text-amber-300 mt-1 truncate" id="calc-res-modal">Rp 171.6 Jt</div>
-                            <span class="text-[9px] text-slate-500 block">perputaran HPP</span>
+                        <div class="border border-[#e1e1e1] bg-[#ffffff] p-2.5 rounded-[4px]">
+                            <span class="text-[9px] text-[#7d7d7d] block uppercase">Modal HPP</span>
+                            <div class="font-bold text-xs text-[#000000] mt-0.5 truncate" id="calc-res-modal">Rp 171.6 Jt</div>
                         </div>
-                        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 text-center">
-                            <span class="text-[10px] text-slate-400 block font-medium">Target Omset</span>
-                            <div class="text-xs sm:text-sm font-mono font-extrabold text-blue-400 mt-1 truncate" id="calc-res-omset">Rp 181.6 Jt</div>
-                            <span class="text-[9px] text-slate-500 block">kotor masuk</span>
+                        <div class="border border-[#e1e1e1] bg-[#ffffff] p-2.5 rounded-[4px]">
+                            <span class="text-[9px] text-[#7d7d7d] block uppercase">Target Omset</span>
+                            <div class="font-bold text-xs text-[#000000] mt-0.5 truncate" id="calc-res-omset">Rp 181.6 Jt</div>
                         </div>
-                        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-3 text-center">
-                            <span class="text-[10px] text-slate-400 block font-medium">Pajak 0.5% (PPh)</span>
-                            <div class="text-xs sm:text-sm font-mono font-extrabold text-slate-300 mt-1 truncate" id="calc-res-tax">Rp 908 Rb</div>
-                            <span class="text-[9px] text-emerald-400 block font-bold" id="calc-res-net">Net: 9.09 Jt</span>
+                        <div class="border border-[#e1e1e1] bg-[#ffffff] p-2.5 rounded-[4px]">
+                            <span class="text-[9px] text-[#7d7d7d] block uppercase">Est. PPh 0.5%</span>
+                            <div class="font-bold text-xs text-[#7d7d7d] mt-0.5 truncate" id="calc-res-tax">Rp 908 Rb</div>
+                            <span class="text-[9px] text-[#103dff] block font-bold" id="calc-res-net">Net: 9.09 Jt</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <!-- 4. Tabel Rekapitulasi Laba Per Bulan -->
-            <div class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm space-y-0">
-                <div class="p-3.5 sm:p-5 border-b border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div>
-                        <h4 class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
-                            <span>Tabel Rekap Keuntungan Bulanan</span>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-300">
-                                2026
-                            </span>
-                        </h4>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Klik baris bulan mana saja untuk langsung memfilter daftar smartphone yang laku di bulan tersebut.</p>
-                    </div>
-
-                    <div class="flex items-center gap-2">
-                        <select id="monthly-table-filter" onchange="filterMonthlyList(this.value)" class="text-xs px-3 py-1.5 bg-slate-950 border border-slate-800 rounded-xl focus:outline-none focus:border-emerald-500 text-slate-200">
-                            <option value="ALL">Semua Bulan ({{ monthly_profits|length }})</option>
-                            {% for m in monthly_profits %}
-                            <option value="{{ m.month }}">{{ m.month_label }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
+            <!-- Table of Monthly Profits -->
+            <div class="space-y-3">
+                <div class="flex items-center justify-between font-mono text-[11px] text-[#7d7d7d]">
+                    <span>TABEL REKAPITULASI BULANAN //</span>
+                    <select id="monthly-table-filter" onchange="filterMonthlyList(this.value)" class="px-2 py-1 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-xs font-mono text-[#000000]">
+                        <option value="ALL">Semua Periode ({{ monthly_profits|length }})</option>
+                        {% for m in monthly_profits %}
+                        <option value="{{ m.month }}">{{ m.month_label }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
 
-                <!-- Desktop Table View -->
-                <div class="hidden sm:block overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead class="bg-slate-950/60 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
+                <div class="overflow-x-auto border border-[#000000] bg-[#ffffff] rounded-[4px]">
+                    <table class="w-full text-left text-xs border-collapse font-mono">
+                        <thead class="bg-[#f4f5f9] text-[#7d7d7d] uppercase text-[10px] border-b border-[#000000]">
                             <tr>
-                                <th class="py-3 px-4">Bulan / Periode</th>
-                                <th class="py-3 px-4 text-center">Unit Laku</th>
-                                <th class="py-3 px-4 text-right">Modal Beli (HPP)</th>
-                                <th class="py-3 px-4 text-right">Penjualan (Omset)</th>
-                                <th class="py-3 px-4 text-right text-emerald-400 font-extrabold">Keuntungan Bersih</th>
-                                <th class="py-3 px-4 text-center">Margin %</th>
-                                <th class="py-3 px-4 text-right">Rata-rata Cuan/Unit</th>
-                                <th class="py-3 px-4 text-center">Status</th>
-                                <th class="py-3 px-4 text-center action-col">Aksi</th>
+                                <th class="py-2.5 px-3">Periode</th>
+                                <th class="py-2.5 px-3 text-center">Unit Laku</th>
+                                <th class="py-2.5 px-3 text-right">Modal Beli (HPP)</th>
+                                <th class="py-2.5 px-3 text-right">Penjualan (Omset)</th>
+                                <th class="py-2.5 px-3 text-right text-[#103dff] font-bold">Keuntungan Bersih</th>
+                                <th class="py-2.5 px-3 text-center">Margin</th>
+                                <th class="py-2.5 px-3 text-right">Rata-rata / Unit</th>
+                                <th class="py-2.5 px-3 text-center action-col">Rincian</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60" id="monthly-tbody">
+                        <tbody class="divide-y divide-[#e1e1e1]" id="monthly-tbody">
                             {% for m in monthly_profits %}
-                            <tr class="hover:bg-slate-800/50 transition cursor-pointer monthly-row" data-month="{{ m.month }}" onclick="selectMonthlyDetail('{{ m.month }}', '{{ m.month_label }}')">
-                                <td class="py-3.5 px-4 font-bold text-white flex items-center gap-2">
-                                    <span class="w-2 h-2 rounded-full {% if m.total_profit >= 10000000 %}bg-amber-400 animate-pulse{% elif m.total_profit >= 5000000 %}bg-emerald-400{% else %}bg-blue-400{% endif %}"></span>
-                                    <span>{{ m.month_label }}</span>
+                            <tr class="hover:bg-[#e6ebff]/40 transition cursor-pointer monthly-row" data-month="{{ m.month }}" onclick="selectMonthlyDetail('{{ m.month }}', '{{ m.month_label }}')">
+                                <td class="py-2.5 px-3 font-serif font-bold text-sm text-[#000000]">
+                                    {{ m.month_label }}
                                 </td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-slate-800 text-slate-200">
-                                        {{ m.total_unit }} Unit
-                                    </span>
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-mono text-slate-400">
-                                    Rp {{ "{:,.0f}".format(m.total_modal).replace(',', '.') }}
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-mono text-slate-200 font-semibold">
-                                    Rp {{ "{:,.0f}".format(m.total_omset).replace(',', '.') }}
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-mono font-extrabold text-emerald-400 text-sm">
-                                    +Rp {{ "{:,.0f}".format(m.total_profit).replace(',', '.') }}
-                                </td>
-                                <td class="py-3.5 px-4 text-center">
-                                    <span class="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                                        {{ m.margin_pct }}%
-                                    </span>
-                                </td>
-                                <td class="py-3.5 px-4 text-right font-mono text-slate-300">
-                                    +Rp {{ "{:,.0f}".format(m.avg_profit_per_unit).replace(',', '.') }}
-                                </td>
-                                <td class="py-3.5 px-4 text-center">
-                                    {% if m.total_profit >= 10000000 %}
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-amber-500/20 text-amber-300 border border-amber-500/30">
-                                        🔥 Rekor Cuan
-                                    </span>
-                                    {% elif m.total_profit >= 6000000 %}
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                                        🚀 Sangat Bagus
-                                    </span>
-                                    {% else %}
-                                    <span class="px-2 py-0.5 rounded-full text-[9px] font-bold bg-slate-800 text-slate-300">
-                                        ⭐ Stabil
-                                    </span>
-                                    {% endif %}
-                                </td>
-                                <td class="py-3.5 px-4 text-center action-col">
-                                    <button onclick="event.stopPropagation(); viewMonthSales('{{ m.month }}')" class="px-2.5 py-1 bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 rounded-lg text-[11px] font-bold transition flex items-center gap-1 mx-auto cursor-pointer">
-                                        <span>🔍</span>
-                                        <span>Detail Unit</span>
+                                <td class="py-2.5 px-3 text-center text-[#7d7d7d]">{{ m.total_unit }} Unit</td>
+                                <td class="py-2.5 px-3 text-right text-[#7d7d7d]">Rp {{ "{:,.0f}".format(m.total_modal).replace(',', '.') }}</td>
+                                <td class="py-2.5 px-3 text-right text-[#000000] font-bold">Rp {{ "{:,.0f}".format(m.total_omset).replace(',', '.') }}</td>
+                                <td class="py-2.5 px-3 text-right font-bold text-[#103dff] text-sm">+Rp {{ "{:,.0f}".format(m.total_profit).replace(',', '.') }}</td>
+                                <td class="py-2.5 px-3 text-center text-[#7d7d7d]">{{ m.margin_pct }}%</td>
+                                <td class="py-2.5 px-3 text-right text-[#000000]">+Rp {{ "{:,.0f}".format(m.avg_profit_per_unit).replace(',', '.') }}</td>
+                                <td class="py-2.5 px-3 text-center action-col">
+                                    <button onclick="event.stopPropagation(); viewMonthSales('{{ m.month }}')" class="key-btn">
+                                        <span>Buka [➔]</span>
                                     </button>
                                 </td>
                             </tr>
@@ -731,125 +738,83 @@
                         </tbody>
                     </table>
                 </div>
-
-                <!-- Mobile Cards View for Monthly Profit -->
-                <div class="sm:hidden divide-y divide-slate-800/80">
-                    {% for m in monthly_profits %}
-                    <div class="p-3.5 space-y-2.5 bg-slate-900/40 monthly-card" data-month="{{ m.month }}" onclick="selectMonthlyDetail('{{ m.month }}', '{{ m.month_label }}')">
-                        <div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2">
-                                <span class="w-2.5 h-2.5 rounded-full {% if m.total_profit >= 10000000 %}bg-amber-400{% elif m.total_profit >= 6000000 %}bg-emerald-400{% else %}bg-blue-400{% endif %}"></span>
-                                <h5 class="font-extrabold text-sm text-white">{{ m.month_label }}</h5>
-                            </div>
-                            <span class="px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-slate-800 text-slate-200">
-                                {{ m.total_unit }} Unit
-                            </span>
-                        </div>
-
-                        <div class="flex items-center justify-between font-mono pt-1">
-                            <div>
-                                <span class="text-[10px] text-slate-400 font-sans block">Keuntungan Bersih:</span>
-                                <span class="font-bold text-emerald-400 text-sm">+Rp {{ "{:,.0f}".format(m.total_profit).replace(',', '.') }}</span>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] text-slate-400 font-sans block">Margin / Cuan Unit:</span>
-                                <span class="text-xs text-slate-200 font-bold">{{ m.margin_pct }}% (Rp {{ "{:,.0f}".format(m.avg_profit_per_unit).replace(',', '.') }})</span>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between text-[11px] pt-1.5 border-t border-slate-800/60 text-slate-400 font-mono">
-                            <span>Omset: Rp {{ "{:,.0f}".format(m.total_omset).replace(',', '.') }}</span>
-                            <button onclick="event.stopPropagation(); viewMonthSales('{{ m.month }}')" class="text-emerald-400 font-sans font-bold flex items-center gap-1">
-                                <span>Lihat Transaksi ➔</span>
-                            </button>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
             </div>
 
-            <!-- 5. Interactive Live Section: Daftar Smartphone Terjual di Bulan Terpilih -->
-            <div id="monthly-detail-section" class="bg-slate-900/80 border border-slate-800 rounded-2xl overflow-hidden shadow-sm space-y-0">
-                <div class="p-3.5 sm:p-5 border-b border-slate-800 flex items-center justify-between">
+            <!-- Selected Month Detail Drawer / Panel -->
+            <div id="monthly-detail-section" class="border border-[#103dff] bg-[#ffffff] p-5 rounded-[4px] space-y-3">
+                <div class="flex items-center justify-between border-b border-[#e1e1e1] pb-2">
                     <div>
-                        <h4 class="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
-                            <span>Detail Unit HP Terjual:</span>
-                            <span class="text-emerald-400 font-mono" id="detail-month-title">{{ monthly_profits[0].month_label if monthly_profits else '-' }}</span>
-                        </h4>
-                        <p class="text-[11px] text-slate-400 mt-0.5">Daftar lengkap smartphone yang laku beserta modal, harga jual, dan keuntungan unit.</p>
+                        <span class="font-mono text-[10px] text-[#7d7d7d] uppercase">RINCIAN UNIT TERJUAL //</span>
+                        <h4 class="font-serif font-bold text-base text-[#000000]" id="detail-month-title">{{ monthly_profits[0].month_label if monthly_profits else '-' }}</h4>
                     </div>
-                    <span class="px-2.5 py-1 rounded-xl text-xs font-mono font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" id="detail-month-badge">
+                    <span class="font-mono text-xs font-bold text-[#103dff]" id="detail-month-badge">
                         {{ monthly_profits[0].total_unit if monthly_profits else 0 }} Unit
                     </span>
                 </div>
 
-                <div class="p-3.5 sm:p-5" id="monthly-items-container">
-                    <!-- Populated dynamically via JS or rendered for first month -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-left text-xs border-collapse">
-                            <thead class="bg-slate-950/60 text-slate-400 font-bold uppercase tracking-wider text-[10px] border-b border-slate-800">
-                                <tr>
-                                    <th class="py-2.5 px-3">Tanggal Jual</th>
-                                    <th class="py-2.5 px-3">Merk &amp; Nama HP</th>
-                                    <th class="py-2.5 px-3 text-right">Modal Beli</th>
-                                    <th class="py-2.5 px-3 text-right">Harga Jual</th>
-                                    <th class="py-2.5 px-3 text-right text-emerald-400 font-extrabold">Untung (Profit)</th>
-                                    <th class="py-2.5 px-3 text-center">Bayar</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-800/60" id="monthly-items-tbody">
-                                <!-- JS inserts rows here -->
-                            </tbody>
-                        </table>
-                    </div>
+                <div class="overflow-x-auto" id="monthly-items-container">
+                    <table class="w-full text-left text-xs border-collapse font-mono">
+                        <thead class="bg-[#f4f5f9] text-[#7d7d7d] uppercase text-[10px] border-b border-[#000000]">
+                            <tr>
+                                <th class="py-2 px-3">Tanggal</th>
+                                <th class="py-2 px-3">Merk &amp; Tipe Smartphone</th>
+                                <th class="py-2 px-3 text-right">Modal Beli</th>
+                                <th class="py-2 px-3 text-right">Harga Jual</th>
+                                <th class="py-2 px-3 text-right text-[#103dff] font-bold">Untung</th>
+                                <th class="py-2 px-3 text-center">Bayar</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-[#e1e1e1]" id="monthly-items-tbody">
+                            <!-- Populated via JS -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
         </div>
 
-        <!-- TAB CONTENT 3: GRAFIK & ANALITIK -->
-        <div id="tab-content-stats" class="hidden space-y-4">
-            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
+        <!-- ==================================================================== -->
+        <!-- TAB CONTENT 4: GRAFIK & ANALITIK                                    -->
+        <!-- ==================================================================== -->
+        <div id="tab-content-stats" class="hidden space-y-6">
+            
+            <div class="border-b border-[#e1e1e1] pb-3">
+                <span class="font-mono text-[11px] text-[#7d7d7d]">CHAPTER 04 //</span>
+                <h3 class="font-serif font-bold text-base text-[#000000]">Grafik Tren Laba Bersih &amp; Top Produk</h3>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
                 
-                <!-- TREN BULANAN CHART -->
-                <div class="lg:col-span-7 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-3">
-                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                        <div>
-                            <h3 class="font-bold text-sm text-white">Tren Keuntungan &amp; Penjualan</h3>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Pertumbuhan omset dan profit per periode</p>
-                        </div>
-                        <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-slate-800 text-slate-300">Bulanan</span>
+                <!-- Chart Container -->
+                <div class="lg:col-span-7 border border-[#000000] bg-[#ffffff] p-5 rounded-[4px] space-y-3">
+                    <div class="flex items-center justify-between font-mono text-[10px] text-[#7d7d7d] border-b border-[#e1e1e1] pb-2">
+                        <span>PLOT 01 // MONTHLY PROFIT &amp; REVENUE CURVE</span>
+                        <span class="text-[#103dff] font-bold">BLUEPRINT BAR</span>
                     </div>
-                    <div class="h-56 sm:h-64 w-full">
+                    <div class="h-64 w-full">
                         <canvas id="monthlyChart"></canvas>
                     </div>
                 </div>
 
-                <!-- TOP PRODUK PALING CUAN -->
-                <div class="lg:col-span-5 bg-slate-900/80 border border-slate-800 rounded-2xl p-4 sm:p-5 shadow-sm space-y-4">
-                    <div class="flex items-center justify-between border-b border-slate-800/80 pb-3">
-                        <div>
-                            <h3 class="font-bold text-sm text-white">Top Produk Paling Cuan</h3>
-                            <p class="text-[11px] text-slate-400 mt-0.5">Kontribusi laba bersih tertinggi</p>
-                        </div>
-                        <span class="text-xs">🏆</span>
+                <!-- Top Products Leaderboard -->
+                <div class="lg:col-span-5 border border-[#e1e1e1] bg-[#ffffff] p-5 rounded-[4px] space-y-4">
+                    <div class="font-mono text-[10px] text-[#7d7d7d] uppercase border-b border-[#e1e1e1] pb-2">
+                        TOP PERFORMING MODELS (PROFIT ACCUMULATION) //
                     </div>
 
-                    <div class="space-y-3">
+                    <div class="space-y-3 font-mono text-xs">
                         {% for p in top_products %}
                         <div class="space-y-1">
-                            <div class="flex items-center justify-between text-xs">
-                                <span class="font-bold text-slate-200 truncate pr-2">{{ p.nama_produk }}</span>
-                                <span class="font-mono font-extrabold text-emerald-400 shrink-0">
-                                    +Rp {{ "{:,.0f}".format(p.total_profit).replace(',', '.') }}
-                                </span>
+                            <div class="flex items-baseline justify-between">
+                                <span class="font-serif font-bold text-[#000000] text-sm">{{ p.nama_produk }}</span>
+                                <span class="font-bold text-[#103dff]">+Rp {{ "{:,.0f}".format(p.total_profit).replace(',', '.') }}</span>
                             </div>
-                            <div class="w-full bg-slate-800 rounded-full h-1.5 overflow-hidden">
-                                <div class="bg-gradient-to-r from-emerald-500 to-teal-400 h-1.5 rounded-full" style="width: {{ [100, (p.total_profit / top_products[0].total_profit * 100)]|min }}%"></div>
-                            </div>
-                            <div class="flex items-center justify-between text-[10px] text-slate-500">
+                            <div class="flex items-center text-[10px] text-[#7d7d7d] justify-between">
                                 <span>{{ p.qty_sold }} unit laku</span>
                                 <span>Omset: Rp {{ "{:,.0f}".format(p.total_revenue).replace(',', '.') }}</span>
+                            </div>
+                            <div class="w-full bg-[#f4f5f9] h-1 border border-[#e1e1e1]">
+                                <div class="bg-[#103dff] h-1" style="width: {{ [100, (p.total_profit / top_products[0].total_profit * 100)]|min }}%"></div>
                             </div>
                         </div>
                         {% endfor %}
@@ -857,299 +822,289 @@
                 </div>
 
             </div>
+
         </div>
 
-        <!-- TAB CONTENT 4: SIMULASI & TRACKER PAJAK UMKM (PP 55/2022 & UU HPP) -->
-        <div id="tab-content-pajak" class="hidden space-y-4">
-            <!-- Header Kartu Status Pajak -->
-            <div class="bg-gradient-to-br from-slate-900 via-slate-900 to-indigo-950/40 border border-indigo-500/30 rounded-2xl p-5 sm:p-6 shadow-sm space-y-5">
-                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-800 pb-4">
-                    <div class="space-y-1">
-                        <div class="flex items-center gap-2">
-                            <span class="text-xl">⚖️</span>
-                            <h3 class="font-extrabold text-base sm:text-lg text-white">Status Pajak Bisnis HP (PPh Final UMKM)</h3>
-                            <span class="px-2.5 py-0.5 rounded-full text-xs font-bold font-mono bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
-                                PP 55 / 2022
-                            </span>
-                        </div>
-                        <p class="text-xs text-slate-400">Dasar perhitungan resmi UU HPP: Omset s.d Rp 500 Juta bebas pajak. Kelebihan s.d Rp 4.8 Miliar dikenakan tarif final 0,5%.</p>
+        <!-- ==================================================================== -->
+        <!-- TAB CONTENT 5: SIMULASI PAJAK UMKM (PP 55 / 2022)                   -->
+        <!-- ==================================================================== -->
+        <div id="tab-content-pajak" class="hidden space-y-6">
+            
+            <div class="border-b border-[#e1e1e1] pb-3">
+                <span class="font-mono text-[11px] text-[#7d7d7d]">CHAPTER 05 //</span>
+                <h3 class="font-serif font-bold text-base text-[#000000]">Status Kepatuhan Pajak Bisnis HP (PP No. 55 Tahun 2022)</h3>
+                <p class="font-serif text-xs text-[#7d7d7d] mt-0.5">Dasar perhitungan perpajakan resmi UMKM Orang Pribadi menurut UU Harmonisasi Peraturan Perpajakan (HPP).</p>
+            </div>
+
+            <!-- Tax Overview Box -->
+            <div class="border border-[#000000] bg-[#ffffff] p-6 rounded-[4px] space-y-5">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#e1e1e1] pb-4">
+                    <div>
+                        <div class="font-mono text-[10px] text-[#7d7d7d] uppercase">STATUS WAJIB PAJAK UMKM //</div>
+                        <h4 class="font-serif font-bold text-lg text-[#000000] mt-0.5">PPh Final UMKM Tarif 0,5%</h4>
                     </div>
-                    <div class="text-left sm:text-right shrink-0">
-                        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold block">Status Perpajakan Saat Ini</span>
-                        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-extrabold mt-1
-                            {% if tax_info.status_color == 'emerald' %}
-                                bg-emerald-500/20 text-emerald-300 border border-emerald-500/30
-                            {% elif tax_info.status_color == 'amber' %}
-                                bg-amber-500/20 text-amber-300 border border-amber-500/30
-                            {% else %}
-                                bg-rose-500/20 text-rose-300 border border-rose-500/30
-                            {% endif %}">
-                            <span class="w-2 h-2 rounded-full animate-ping
-                                {% if tax_info.status_color == 'emerald' %}bg-emerald-400{% elif tax_info.status_color == 'amber' %}bg-amber-400{% else %}bg-rose-400{% endif %}"></span>
+                    <div>
+                        <span class="font-mono text-xs font-bold px-3 py-1 rounded-[4px] border border-[#103dff] bg-[#e6ebff] text-[#103dff]">
                             {{ tax_info.status }}
                         </span>
                     </div>
                 </div>
 
-                <!-- 3 Kotak Ringkasan Angka Pajak -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <!-- Kotak 1: Total Omset Riil -->
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
-                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">1. Total Omset (Akumulasi)</span>
-                        <div class="text-lg font-mono font-extrabold text-white mt-1">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                    <div class="border border-[#e1e1e1] p-3.5 rounded-[4px] bg-[#fbfbfb]">
+                        <span class="text-[10px] text-[#7d7d7d] block uppercase">1. Total Omset Akumulasi</span>
+                        <div class="font-bold text-base text-[#000000] mt-1">
                             Rp {{ "{:,.0f}".format(tax_info.omset).replace(',', '.') }}
                         </div>
-                        <span class="text-[10px] text-slate-500 mt-0.5 block">Total nilai HP yang terjual</span>
                     </div>
-
-                    <!-- Kotak 2: Omset Kena Pajak (DPP) -->
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
-                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">2. Omset Kena Pajak (DPP)</span>
-                        <div class="text-lg font-mono font-extrabold text-amber-300 mt-1">
+                    <div class="border border-[#e1e1e1] p-3.5 rounded-[4px] bg-[#fbfbfb]">
+                        <span class="text-[10px] text-[#7d7d7d] block uppercase">2. Omset Kena Pajak (&gt;500 Jt)</span>
+                        <div class="font-bold text-base text-[#7d7d7d] mt-1">
                             Rp {{ "{:,.0f}".format(tax_info.taxable_omset).replace(',', '.') }}
                         </div>
-                        <span class="text-[10px] text-slate-500 mt-0.5 block">Kelebihan di atas batas 500 Juta</span>
                     </div>
-
-                    <!-- Kotak 3: Estimasi Tagihan Pajak (0.5%) -->
-                    <div class="bg-slate-950/60 border border-slate-800 rounded-xl p-3.5">
-                        <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wide">3. Estimasi Pajak Terutang (0,5%)</span>
-                        <div class="text-lg font-mono font-extrabold 
-                            {% if tax_info.tax_amount == 0 %}text-emerald-400{% else %}text-amber-400{% endif %} mt-1">
+                    <div class="border border-[#103dff] p-3.5 rounded-[4px] bg-[#e6ebff]">
+                        <span class="text-[10px] text-[#103dff] block uppercase font-bold">3. Estimasi Pajak Terutang (0.5%)</span>
+                        <div class="font-bold text-base text-[#103dff] mt-1">
                             Rp {{ "{:,.0f}".format(tax_info.tax_amount).replace(',', '.') }}
                         </div>
-                        <span class="text-[10px] text-slate-500 mt-0.5 block">
-                            {% if tax_info.tax_amount == 0 %}
-                            Aman! Belum wajib bayar pajak
-                            {% else %}
-                            0,5% × Omset Kena Pajak
-                            {% endif %}
-                        </span>
                     </div>
                 </div>
 
-                <!-- Progress Bar Menuju Batas 4.8 Miliar (Batas PKP) -->
-                <div class="space-y-2 bg-slate-950/40 p-4 rounded-xl border border-slate-800/80">
-                    <div class="flex items-center justify-between text-xs font-bold">
-                        <span class="text-slate-300">Posisi Omset Menuju Batas Maksimal UMKM (Rp 4,8 Miliar)</span>
-                        <span class="font-mono text-indigo-400">{{ "{:.1f}%".format(tax_info.pct_to_pkp) }}</span>
-                    </div>
-                    <div class="w-full bg-slate-800 rounded-full h-3 overflow-hidden p-0.5">
-                        <div class="bg-gradient-to-r from-emerald-500 via-amber-500 to-indigo-500 h-2 rounded-full transition-all duration-500" 
-                             style="width: {{ [100, tax_info.pct_to_pkp]|min }}%"></div>
-                    </div>
-                    <div class="flex items-center justify-between text-[11px] text-slate-500 font-mono">
-                        <span>Rp 0</span>
-                        <span class="text-emerald-400 font-bold">Bebas Pajak (500 Jt)</span>
-                        <span class="text-indigo-400 font-bold">Maksimal UMKM (4.8 M)</span>
-                    </div>
-                </div>
-
-                <!-- TABEL TINGKATAN PAJAK SESUAI OMSET (REFERENSI RESMI) -->
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left text-xs border-collapse">
-                        <thead>
-                            <tr class="border-b border-slate-800 text-slate-400 font-bold text-[11px]">
-                                <th class="py-2.5 px-3">Rentang Omset Setahun</th>
-                                <th class="py-2.5 px-3">Tarif Pajak</th>
-                                <th class="py-2.5 px-3">Aturan / Dasar Hukum</th>
+                <!-- Reference Legal Table -->
+                <div class="overflow-x-auto border border-[#e1e1e1] bg-[#ffffff] rounded-[4px]">
+                    <table class="w-full text-left text-xs border-collapse font-mono">
+                        <thead class="bg-[#f4f5f9] text-[#7d7d7d] uppercase text-[10px] border-b border-[#000000]">
+                            <tr>
+                                <th class="py-2.5 px-3">Rentang Omset Tahunan</th>
+                                <th class="py-2.5 px-3">Tarif PPh</th>
+                                <th class="py-2.5 px-3">Dasar Hukum</th>
                                 <th class="py-2.5 px-3">Kewajiban Pembukuan</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-800/60 font-medium">
-                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset <= 500000000 %}bg-emerald-500/5 text-emerald-300 font-bold{% endif %}">
+                        <tbody class="divide-y divide-[#e1e1e1]">
+                            <tr class="hover:bg-[#e6ebff]/30">
                                 <td class="py-2.5 px-3">Rp 0 s.d Rp 500 Juta</td>
-                                <td class="py-2.5 px-3 text-emerald-400 font-bold">0% (Rp 0 / Bebas)</td>
-                                <td class="py-2.5 px-3 text-slate-400">UU HPP Pasal 7 ayat (2a)</td>
-                                <td class="py-2.5 px-3 text-slate-400">Pencatatan sederhana (GadgetFlow)</td>
+                                <td class="py-2.5 px-3 font-bold text-[#103dff]">0% (Bebas PTKP)</td>
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">UU HPP Ps. 7 ayat (2a)</td>
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">Pencatatan Sederhana</td>
                             </tr>
-                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset > 500000000 and tax_info.omset <= 4800000000 %}bg-amber-500/5 text-amber-300 font-bold{% endif %}">
-                                <td class="py-2.5 px-3">Rp 500 Juta s.d Rp 4,8 Miliar</td>
-                                <td class="py-2.5 px-3 text-amber-400 font-bold">0,5% (Final)</td>
-                                <td class="py-2.5 px-3 text-slate-400">PP No. 55 Tahun 2022</td>
-                                <td class="py-2.5 px-3 text-slate-400">Pencatatan sederhana (GadgetFlow)</td>
+                            <tr class="hover:bg-[#e6ebff]/30 bg-[#e6ebff]/20 font-bold">
+                                <td class="py-2.5 px-3">Rp 500 Jt s.d Rp 4,8 Miliar</td>
+                                <td class="py-2.5 px-3 text-[#103dff]">0,5% (Final)</td>
+                                <td class="py-2.5 px-3 text-[#000000]">PP No. 55 Th 2022</td>
+                                <td class="py-2.5 px-3 text-[#000000]">Pencatatan GadgetFlow</td>
                             </tr>
-                            <tr class="hover:bg-slate-800/20 {% if tax_info.omset > 4800000000 %}bg-rose-500/5 text-rose-300 font-bold{% endif %}">
-                                <td class="py-2.5 px-3">&gt; Rp 4,8 Miliar (Korporat)</td>
-                                <td class="py-2.5 px-3 text-rose-400 font-bold">Tarif Normal + PPN 11%</td>
-                                <td class="py-2.5 px-3 text-slate-400">Wajib PKP &amp; PPh Badan/Umum</td>
-                                <td class="py-2.5 px-3 text-slate-400">Wajib Akuntansi &amp; Neraca Lengkap</td>
+                            <tr class="hover:bg-[#e6ebff]/30">
+                                <td class="py-2.5 px-3">&gt; Rp 4,8 Miliar</td>
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">Tarif Normal + PPN 11%</td>
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">Wajib PKP</td>
+                                <td class="py-2.5 px-3 text-[#7d7d7d]">Akuntansi Neraca Lengkap</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
             </div>
+
         </div>
 
     </main>
 
-    <!-- MODAL 1: INPUT BELI STOK MASUK (KULAKAN) -->
-    <div id="buy-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">📦</span>
-                    <h3 class="font-extrabold text-sm sm:text-base text-white">Catat Stok Kulakan Baru</h3>
+    <!-- TYPEWRITER FOOTER (MAKING SOFTWARE REFERENCE) -->
+    <footer class="w-full max-w-[1536px] mx-auto px-4 sm:px-12 py-12 mt-12 border-t border-[#000000] text-center font-mono space-y-3">
+        <div class="text-[#7d7d7d] text-sm tracking-widest">***</div>
+        <div class="text-xs uppercase text-[#000000] tracking-wider font-bold">
+            | GADGETFLOW // SINGLE PAGE TECHNICAL LEDGER MANUAL |
+        </div>
+        <div class="text-[11px] text-[#7d7d7d] uppercase tracking-wide">
+            SYS_VER: 2026.11 · OPERATED WITH FASTAPI &amp; SQLITE // AUTHOR: CHAERUL HIDAYAT
+        </div>
+        <div class="glyph-rule pt-2 opacity-50">
+            ========================================================================================================================================================================================================
+        </div>
+    </footer>
+
+    <!-- ==================================================================== -->
+    <!-- MODAL 1: INPUT BELI STOK MASUK (KULAKAN)                             -->
+    <!-- ==================================================================== -->
+    <div id="buy-modal" class="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-[#ffffff] border border-[#000000] rounded-[4px] p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-[#000000]">
+                <div>
+                    <span class="font-mono text-[10px] text-[#7d7d7d] uppercase">ENTRY 01 //</span>
+                    <h3 class="font-serif font-bold text-base text-[#000000]">Catat Stok Kulakan Baru</h3>
                 </div>
-                <button onclick="closeBuyModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+                <button onclick="closeBuyModal()" class="key-btn">✕</button>
             </div>
 
-            <form onsubmit="submitBuy(event)" class="space-y-3 text-xs">
+            <form onsubmit="submitBuy(event)" class="space-y-3 font-mono text-xs">
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Pilih Merk Smartphone</label>
-                    <div class="grid grid-cols-3 gap-2">
-                        <button type="button" onclick="selectBrand('APPLE')" class="brand-btn p-2 rounded-xl bg-slate-800 border border-emerald-500 font-bold text-white text-center">🍏 Apple</button>
-                        <button type="button" onclick="selectBrand('POCO')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🟡 Poco</button>
-                        <button type="button" onclick="selectBrand('SAMSUNG')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🔵 Samsung</button>
-                        <button type="button" onclick="selectBrand('INFINIX')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🟠 Infinix</button>
-                        <button type="button" onclick="selectBrand('ITEL')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">🔴 itel</button>
-                        <button type="button" onclick="selectBrand('XIAOMI')" class="brand-btn p-2 rounded-xl bg-slate-950 border border-slate-800 font-medium text-slate-300 text-center">⚪ Xiaomi</button>
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Pilih Merk:</label>
+                    <div class="grid grid-cols-3 gap-1.5">
+                        <button type="button" onclick="selectBrand('APPLE')" class="brand-btn key-btn key-btn-primary w-full">Apple</button>
+                        <button type="button" onclick="selectBrand('POCO')" class="brand-btn key-btn w-full">Poco</button>
+                        <button type="button" onclick="selectBrand('SAMSUNG')" class="brand-btn key-btn w-full">Samsung</button>
+                        <button type="button" onclick="selectBrand('INFINIX')" class="brand-btn key-btn w-full">Infinix</button>
+                        <button type="button" onclick="selectBrand('ITEL')" class="brand-btn key-btn w-full">itel</button>
+                        <button type="button" onclick="selectBrand('XIAOMI')" class="brand-btn key-btn w-full">Xiaomi</button>
                     </div>
                     <input type="hidden" id="buy-merk" value="APPLE">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Tipe / Seri Smartphone</label>
-                    <input type="text" id="buy-nama" required placeholder="misal: IPHONE 15 PINK 128GB" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Tipe / Seri Perangkat:</label>
+                    <input type="text" id="buy-nama" required placeholder="misal: IPHONE 15 PINK 128GB" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Harga Beli (Modal Kulakan)</label>
-                    <input type="number" id="buy-harga" required placeholder="misal: 9700000" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-sm font-bold text-amber-300">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Harga Beli HPP (IDR):</label>
+                    <input type="number" id="buy-harga" required placeholder="9700000" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] font-bold focus:outline-none focus:border-[#103dff]">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Metode Bayar</label>
-                        <input type="text" id="buy-bayar" value="BCA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Metode Bayar:</label>
+                        <input type="text" id="buy-bayar" value="BCA" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] uppercase focus:outline-none focus:border-[#103dff]">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Tanggal Beli</label>
-                        <input type="date" id="buy-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Tanggal Beli:</label>
+                        <input type="date" id="buy-tgl" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl transition shadow-lg shadow-emerald-500/25 mt-2 cursor-pointer">
-                    Simpan ke Stok Ready
-                </button>
+                <div class="pt-2">
+                    <button type="submit" class="key-btn key-btn-primary w-full h-[32px]">
+                        <span>Simpan ke Stok Ready</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 2: KONVERSI JUAL UNIT READY -->
-    <div id="sell-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">💰</span>
-                    <h3 class="font-extrabold text-sm sm:text-base text-white">Catat Unit Terjual</h3>
+    <!-- ==================================================================== -->
+    <!-- MODAL 2: KONVERSI JUAL UNIT READY                                   -->
+    <!-- ==================================================================== -->
+    <div id="sell-modal" class="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-[#ffffff] border border-[#000000] rounded-[4px] p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-[#000000]">
+                <div>
+                    <span class="font-mono text-[10px] text-[#7d7d7d] uppercase">TRANSACTION OUT //</span>
+                    <h3 class="font-serif font-bold text-base text-[#000000]">Catat Unit Terjual</h3>
                 </div>
-                <button onclick="closeSellModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+                <button onclick="closeSellModal()" class="key-btn">✕</button>
             </div>
 
-            <form onsubmit="submitSell(event)" class="space-y-3.5 text-xs">
+            <form onsubmit="submitSell(event)" class="space-y-3 font-mono text-xs">
                 <input type="hidden" id="sell-id">
                 
-                <div class="bg-slate-950 p-3 rounded-2xl border border-slate-800 space-y-1">
-                    <div class="text-[10px] text-slate-400 uppercase font-bold tracking-wider">Unit Yang Terjual:</div>
-                    <div class="font-bold text-sm text-white" id="sell-product-display">-</div>
-                    <div class="text-xs font-mono text-slate-400">
-                        Modal Beli: <span class="text-amber-300 font-bold" id="sell-modal-display">Rp 0</span>
+                <div class="bg-[#f4f5f9] p-3 rounded-[4px] border border-[#e1e1e1] space-y-1">
+                    <div class="text-[10px] text-[#7d7d7d] uppercase">UNIT TERPILIH:</div>
+                    <div class="font-serif font-bold text-sm text-[#000000]" id="sell-product-display">-</div>
+                    <div class="text-xs text-[#7d7d7d]">
+                        Modal Beli: <span class="text-[#000000] font-bold" id="sell-modal-display">Rp 0</span>
                     </div>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Harga Jual (Deal ke Pembeli)</label>
-                    <input type="number" id="sell-harga" required placeholder="misal: 10500000" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-base font-bold text-emerald-400" oninput="calcSellPreview()">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Harga Jual Deal (IDR):</label>
+                    <input type="number" id="sell-harga" required placeholder="10500000" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#103dff] rounded-[4px] text-[#103dff] font-bold text-sm focus:outline-none" oninput="calcSellPreview()">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Metode Diterima</label>
-                        <input type="text" id="sell-bayar" value="BCA" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Metode Diterima:</label>
+                        <input type="text" id="sell-bayar" value="BCA" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] uppercase focus:outline-none focus:border-[#103dff]">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Tanggal Jual</label>
-                        <input type="date" id="sell-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Tanggal Jual:</label>
+                        <input type="date" id="sell-tgl" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                     </div>
                 </div>
 
                 <!-- Preview Cuan -->
-                <div class="bg-slate-950 border border-slate-800 rounded-xl p-3 flex items-center justify-between">
+                <div class="bg-[#e6ebff]/50 border border-[#103dff]/30 rounded-[4px] p-3 flex items-center justify-between">
                     <div>
-                        <div class="text-[10px] text-slate-400 font-medium">Cuan Bersih</div>
-                        <div id="sell-preview-cuan" class="font-mono font-bold text-emerald-400 text-sm">+Rp 0</div>
+                        <div class="text-[10px] text-[#7d7d7d] uppercase">Cuan Bersih:</div>
+                        <div id="sell-preview-cuan" class="font-bold text-[#103dff] text-sm">+Rp 0</div>
                     </div>
-                    <div>
-                        <div class="text-[10px] text-slate-400 font-medium text-right">Margin</div>
-                        <div id="sell-preview-margin" class="font-mono font-bold text-amber-400 text-sm text-right">0.00%</div>
+                    <div class="text-right">
+                        <div class="text-[10px] text-[#7d7d7d] uppercase">Margin:</div>
+                        <div id="sell-preview-margin" class="font-bold text-[#000000] text-sm">0.00%</div>
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-slate-950 font-extrabold rounded-xl transition shadow-lg shadow-emerald-500/25 mt-2 cursor-pointer">
-                    Konfirmasi Penjualan Selesai
-                </button>
+                <div class="pt-2">
+                    <button type="submit" class="key-btn key-btn-primary w-full h-[32px]">
+                        <span>Konfirmasi Penjualan Selesai</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- MODAL 3: EDIT DATA STOK READY -->
-    <div id="edit-modal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden items-end sm:items-center justify-center p-0 sm:p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-t-3xl sm:rounded-3xl p-5 sm:p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
-            <div class="flex items-center justify-between pb-3 border-b border-slate-800">
-                <div class="flex items-center gap-2">
-                    <span class="text-xl">✏️</span>
-                    <h3 class="font-extrabold text-sm sm:text-base text-white">Edit Data Stok Ready</h3>
+    <!-- ==================================================================== -->
+    <!-- MODAL 3: EDIT DATA STOK READY                                       -->
+    <!-- ==================================================================== -->
+    <div id="edit-modal" class="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs hidden items-center justify-center p-4">
+        <div class="bg-[#ffffff] border border-[#000000] rounded-[4px] p-6 w-full max-w-md shadow-2xl space-y-4 max-h-[90vh] overflow-y-auto">
+            <div class="flex items-center justify-between pb-3 border-b border-[#000000]">
+                <div>
+                    <span class="font-mono text-[10px] text-[#7d7d7d] uppercase">UPDATE RECORD //</span>
+                    <h3 class="font-serif font-bold text-base text-[#000000]">Edit Data Stok</h3>
                 </div>
-                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm font-bold">✕</button>
+                <button onclick="closeEditModal()" class="key-btn">✕</button>
             </div>
 
-            <form onsubmit="submitEdit(event)" class="space-y-3.5 text-xs">
+            <form onsubmit="submitEdit(event)" class="space-y-3 font-mono text-xs">
                 <input type="hidden" id="edit-id">
                 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Merk Smartphone</label>
-                    <select id="edit-merk" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Merk:</label>
+                    <select id="edit-merk" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                         <option value="APPLE">Apple</option>
                         <option value="POCO">Poco</option>
                         <option value="SAMSUNG">Samsung</option>
                         <option value="INFINIX">Infinix</option>
                         <option value="ITEL">itel</option>
-                        <option value="XIAOMI">Xiaomi / Redmi</option>
-                        <option value="LAINNYA">Lainnya</option>
+                        <option value="XIAOMI">Xiaomi</option>
+                        <option value="OTHER">Lainnya</option>
                     </select>
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Nama / Tipe Produk</label>
-                    <input type="text" id="edit-nama" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-medium">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Tipe / Seri Perangkat:</label>
+                    <input type="text" id="edit-nama" required class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                 </div>
 
                 <div>
-                    <label class="block font-bold text-slate-300 mb-1">Harga Modal Beli</label>
-                    <input type="number" id="edit-harga" required class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono text-emerald-400 font-bold">
+                    <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Modal Beli HPP (IDR):</label>
+                    <input type="number" id="edit-harga" required class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] font-bold focus:outline-none focus:border-[#103dff]">
                 </div>
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Metode Bayar Beli</label>
-                        <input type="text" id="edit-bayar" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 uppercase font-medium">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Metode Bayar:</label>
+                        <input type="text" id="edit-bayar" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] uppercase focus:outline-none focus:border-[#103dff]">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-300 mb-1">Tanggal Beli</label>
-                        <input type="date" id="edit-tgl" class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-800 rounded-xl text-white focus:outline-none focus:border-emerald-500 font-mono">
+                        <label class="block text-[10px] uppercase text-[#7d7d7d] mb-1">Tanggal Beli:</label>
+                        <input type="date" id="edit-tgl" class="w-full px-3 py-1.5 bg-[#ffffff] border border-[#7d7d7d] rounded-[4px] text-[#000000] focus:outline-none focus:border-[#103dff]">
                     </div>
                 </div>
 
-                <button type="submit" class="w-full py-3 bg-blue-600 hover:bg-blue-500 active:scale-95 text-white font-extrabold rounded-xl transition shadow-lg shadow-blue-600/25 mt-2 cursor-pointer">
-                    Simpan Perubahan
-                </button>
+                <div class="pt-2">
+                    <button type="submit" class="key-btn key-btn-primary w-full h-[32px]">
+                        <span>Simpan Perubahan</span>
+                    </button>
+                </div>
             </form>
         </div>
     </div>
 
-    <!-- JAVASCRIPT LOGIC -->
+    <!-- ==================================================================== -->
+    <!-- JAVASCRIPT CONTROLLERS                                               -->
+    <!-- ==================================================================== -->
     <script>
         const todayStr = new Date().toISOString().split('T')[0];
         document.getElementById('buy-tgl').value = todayStr;
@@ -1173,7 +1128,6 @@
             [btnR, btnP, btnL, btnS, btnT].forEach(b => {
                 if (!b) return;
                 b.classList.remove('active');
-                b.classList.add('text-slate-400');
             });
             [conR, conP, conL, conS, conT].forEach(c => {
                 if (c) c.classList.add('hidden');
@@ -1181,19 +1135,13 @@
 
             if (tab === 'ready') {
                 btnR.classList.add('active');
-                btnR.classList.remove('text-slate-400');
                 conR.classList.remove('hidden');
             } else if (tab === 'penjualan') {
                 btnP.classList.add('active');
-                btnP.classList.remove('text-slate-400');
                 conP.classList.remove('hidden');
             } else if (tab === 'laba-bulanan') {
-                if (btnL) {
-                    btnL.classList.add('active');
-                    btnL.classList.remove('text-slate-400');
-                }
+                if (btnL) btnL.classList.add('active');
                 if (conL) conL.classList.remove('hidden');
-                // Load default month items if container empty
                 const tbody = document.getElementById('monthly-items-tbody');
                 if (tbody && !tbody.children.length) {
                     const firstRow = document.querySelector('.monthly-row');
@@ -1203,11 +1151,9 @@
                 }
             } else if (tab === 'stats') {
                 btnS.classList.add('active');
-                btnS.classList.remove('text-slate-400');
                 conS.classList.remove('hidden');
             } else if (tab === 'pajak') {
                 btnT.classList.add('active');
-                btnT.classList.remove('text-slate-400');
                 conT.classList.remove('hidden');
             }
         }
@@ -1216,11 +1162,9 @@
             document.getElementById('buy-merk').value = brand;
             document.querySelectorAll('.brand-btn').forEach(btn => {
                 if (btn.innerText.toUpperCase().includes(brand)) {
-                    btn.classList.add('border-emerald-500', 'bg-slate-800', 'text-white');
-                    btn.classList.remove('border-slate-800', 'bg-slate-950', 'text-slate-300');
+                    btn.className = "brand-btn key-btn key-btn-primary w-full";
                 } else {
-                    btn.classList.remove('border-emerald-500', 'bg-slate-800', 'text-white');
-                    btn.classList.add('border-slate-800', 'bg-slate-950', 'text-slate-300');
+                    btn.className = "brand-btn key-btn w-full";
                 }
             });
         }
@@ -1235,13 +1179,13 @@
             document.getElementById('buy-modal').classList.remove('flex');
         }
 
-        function openEditModal(id, merk, nama, harga, bayar, tgl) {
+        function openEditModal(id, brand, name, cost, payment, date) {
             document.getElementById('edit-id').value = id;
-            document.getElementById('edit-merk').value = merk || 'APPLE';
-            document.getElementById('edit-nama').value = nama;
-            document.getElementById('edit-harga').value = harga;
-            document.getElementById('edit-bayar').value = bayar || 'CASH';
-            document.getElementById('edit-tgl').value = tgl || todayStr;
+            document.getElementById('edit-merk').value = brand || 'APPLE';
+            document.getElementById('edit-nama').value = name;
+            document.getElementById('edit-harga').value = cost;
+            document.getElementById('edit-bayar').value = payment || 'BCA';
+            document.getElementById('edit-tgl').value = date || todayStr;
 
             document.getElementById('edit-modal').classList.remove('hidden');
             document.getElementById('edit-modal').classList.add('flex');
@@ -1433,13 +1377,6 @@
                     r.style.display = 'none';
                 }
             });
-            document.querySelectorAll('.monthly-card').forEach(c => {
-                if (val === 'ALL' || c.dataset.month === val) {
-                    c.style.display = '';
-                } else {
-                    c.style.display = 'none';
-                }
-            });
             if (val !== 'ALL') {
                 const opt = document.querySelector(`#monthly-table-filter option[value="${val}"]`);
                 selectMonthlyDetail(val, opt ? opt.innerText : val);
@@ -1450,9 +1387,9 @@
         async function selectMonthlyDetail(month, label) {
             document.getElementById('detail-month-title').innerText = label;
             const badge = document.getElementById('detail-month-badge');
-            badge.innerText = 'Memuat...';
+            badge.innerText = 'MEMUAT DATA...';
             const tbody = document.getElementById('monthly-items-tbody');
-            tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-500">Memuat data transaksi unit...</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center font-serif text-[#7d7d7d]">Memuat rincian transaksi...</td></tr>';
 
             try {
                 const res = await fetch(`/api/monthly-profits?month=${month}`);
@@ -1460,29 +1397,25 @@
                 badge.innerText = `${data.summary.unit_count || 0} Unit (Profit: +Rp ${Math.round(data.summary.total_profit || 0).toLocaleString('id-ID')})`;
                 
                 if (!data.items || !data.items.length) {
-                    tbody.innerHTML = '<tr><td colspan="6" class="py-6 text-center text-slate-500 italic">Tidak ada transaksi di periode ini.</td></tr>';
+                    tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center font-serif text-[#7d7d7d] italic">Tidak ada transaksi di periode ini.</td></tr>';
                     return;
                 }
 
                 tbody.innerHTML = data.items.map(it => `
-                    <tr class="hover:bg-slate-800/40 transition">
-                        <td class="py-3 px-3 text-slate-400 font-mono text-[11px] whitespace-nowrap">${it.tanggal_jual || it.tanggal}</td>
-                        <td class="py-3 px-3">
-                            <div class="font-bold text-white flex items-center gap-1.5">
-                                <span class="text-[10px] font-mono bg-slate-800 text-slate-300 px-1.5 py-0.5 rounded">${it.merk || 'APPLE'}</span>
-                                <span>${it.nama_produk}</span>
-                            </div>
+                    <tr class="hover:bg-[#e6ebff]/30 transition font-mono">
+                        <td class="py-2 px-3 text-[#7d7d7d] whitespace-nowrap">${it.tanggal_jual || it.tanggal}</td>
+                        <td class="py-2 px-3 font-serif font-bold text-[#000000]">
+                            <span class="font-mono text-[10px] text-[#7d7d7d] uppercase mr-1">[${it.merk || 'APPLE'}]</span>
+                            ${it.nama_produk}
                         </td>
-                        <td class="py-3 px-3 text-right font-mono text-slate-400">Rp ${Math.round(it.harga_beli).toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-right font-mono text-white font-semibold">Rp ${Math.round(it.harga_jual).toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-right font-mono font-extrabold text-emerald-400 text-sm">+Rp ${Math.round(it.keuntungan).toLocaleString('id-ID')}</td>
-                        <td class="py-3 px-3 text-center">
-                            <span class="text-[10px] font-bold px-2 py-0.5 rounded bg-slate-800 text-slate-300">${it.pembayaran}</span>
-                        </td>
+                        <td class="py-2 px-3 text-right text-[#7d7d7d]">Rp ${Math.round(it.harga_beli).toLocaleString('id-ID')}</td>
+                        <td class="py-2 px-3 text-right font-bold text-[#000000]">Rp ${Math.round(it.harga_jual).toLocaleString('id-ID')}</td>
+                        <td class="py-2 px-3 text-right font-bold text-[#103dff]">+Rp ${Math.round(it.keuntungan).toLocaleString('id-ID')}</td>
+                        <td class="py-2 px-3 text-center text-[10px] text-[#7d7d7d]">${it.pembayaran}</td>
                     </tr>
                 `).join('');
             } catch (err) {
-                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-rose-400">Gagal memuat rincian bulan.</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" class="py-4 text-center text-[#e11d48]">Gagal memuat rincian bulan.</td></tr>';
             }
         }
 
@@ -1509,11 +1442,11 @@
 
             if (isShowingAll) {
                 extraRows.forEach(row => row.classList.remove('hidden'));
-                toggleText.innerText = "🔼 Tampilkan 10 Terbaru";
+                toggleText.innerText = "Tampilkan 10 Terbaru";
                 if (visibleCountEl) visibleCountEl.innerText = totalSalesCount;
             } else {
                 extraRows.forEach(row => row.classList.add('hidden'));
-                toggleText.innerText = `📜 Tampilkan Semua (${totalSalesCount})`;
+                toggleText.innerText = `Tampilkan Semua (${totalSalesCount})`;
                 if (visibleCountEl) visibleCountEl.innerText = "10";
             }
         }
@@ -1527,7 +1460,7 @@
             }
         }
 
-        // Render Monthly Chart
+        // Render Monthly Chart in Blueprint Aesthetic
         async function initCharts() {
             const res = await fetch('/api/stats');
             const data = await res.json();
@@ -1543,20 +1476,24 @@
                     labels: labels,
                     datasets: [
                         {
-                            label: 'Cuan Bersih (Profit)',
+                            label: 'Keuntungan Bersih (Profit)',
                             data: profits,
-                            backgroundColor: '#10B981',
-                            borderRadius: 6,
+                            backgroundColor: '#103dff',
+                            borderRadius: 0,
+                            borderWidth: 1,
+                            borderColor: '#0043ff',
                             order: 1
                         },
                         {
                             label: 'Total Penjualan (Omset)',
                             data: revenues,
                             type: 'line',
-                            borderColor: '#3B82F6',
-                            borderWidth: 2,
-                            pointBackgroundColor: '#3B82F6',
-                            tension: 0.3,
+                            borderColor: '#000000',
+                            borderWidth: 1.5,
+                            pointBackgroundColor: '#0043ff',
+                            pointBorderColor: '#ffffff',
+                            pointRadius: 3,
+                            tension: 0.1,
                             order: 0,
                             yAxisID: 'y1'
                         }
@@ -1567,14 +1504,14 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
-                            ticks: { color: '#94A3B8', font: { size: 10 } }
+                            grid: { color: 'rgba(0,0,0,0.06)' },
+                            ticks: { color: '#7d7d7d', font: { family: "'JetBrains Mono', monospace", size: 10 } }
                         },
                         y: {
-                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            grid: { color: 'rgba(0,0,0,0.06)' },
                             ticks: {
-                                color: '#10B981',
-                                font: { size: 10 },
+                                color: '#103dff',
+                                font: { family: "'JetBrains Mono', monospace", size: 10 },
                                 callback: val => 'Rp ' + (val / 1000000).toFixed(0) + ' Jt'
                             }
                         },
@@ -1582,15 +1519,15 @@
                             position: 'right',
                             grid: { display: false },
                             ticks: {
-                                color: '#3B82F6',
-                                font: { size: 10 },
+                                color: '#000000',
+                                font: { family: "'JetBrains Mono', monospace", size: 10 },
                                 callback: val => 'Rp ' + (val / 1000000).toFixed(0) + ' Jt'
                             }
                         }
                     },
                     plugins: {
                         legend: {
-                            labels: { color: '#E2E8F0', font: { size: 11 } }
+                            labels: { color: '#000000', font: { family: "'JetBrains Mono', monospace", size: 11 } }
                         }
                     }
                 }
